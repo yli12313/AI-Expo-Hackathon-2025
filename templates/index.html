@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome - AI+Expo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+</head>
+<body>
+    <div class="center-box">
+        <h1>Welcome to AI+Expo</h1>
+        <div class="desc">
+            Choose your destination below:
+        </div>
+        <a href="{{ url_for('live') }}" class="nav-btn">Live Emotion Detection</a>
+        <a href="{{ url_for('live') }}" class="nav-btn" target="_blank">Other AI Experience</a>
+    </div>
+</body>
+</html>
