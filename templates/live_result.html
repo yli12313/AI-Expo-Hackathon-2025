@@ -2,20 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Emotion Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <nav class="app-nav">
+        <a href="/" class="nav-back">
+            <i class="fas fa-arrow-left"></i>
+            Back to Hub
+        </a>
+        <h2>Live Emotion Detection</h2>
+    </nav>
+    
     <div class="container">
-        <h1>Live Emotion Detection</h1>
-        <video id="video" width="640" height="480" autoplay></video>
-        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-        <button id="toggle-btn" class="btn">Stop Analysis</button>
-        <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
-        <p>Dominant Emotion: <span id="emotion">None</span></p>
-        <h3>All Emotions:</h3>
-        <ul id="emotions-list"></ul>
+        <h1>Live Emotion Recognition</h1>
+        <div class="video-container">
+            <video id="video" width="640" height="480" autoplay></video>
+            <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+        </div>
+        
+        <div class="controls">
+            <button id="toggle-btn" class="btn">Stop Analysis</button>
+        </div>
+        
+        <div class="results">
+            <div class="emotion-display">
+                <p>Dominant Emotion: <span id="emotion">None</span></p>
+            </div>
+            
+            <div class="emotions-section">
+                <h3>All Emotions:</h3>
+                <ul id="emotions-list"></ul>
+            </div>
+        </div>
+        
         <script>
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
@@ -26,7 +50,13 @@
             let intervalId = null;
 
             navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => { video.srcObject = stream; });
+                .then(stream => { 
+                    video.srcObject = stream; 
+                })
+                .catch(err => {
+                    console.error('Error accessing camera:', err);
+                    emotionSpan.textContent = 'Camera access denied';
+                });
 
             function analyzeFrame() {
                 if (!analysisActive) return;
@@ -54,6 +84,10 @@
                                 emotionsList.appendChild(li);
                             });
                         }
+                    })
+                    .catch(err => {
+                        console.error('Error analyzing emotion:', err);
+                        emotionSpan.textContent = 'Analysis error';
                     });
                 }, 'image/jpeg');
             }
@@ -81,6 +115,7 @@
                     stopAnalysis();
                 }
             });
+            
             startAnalysis();
         </script>
     </div>

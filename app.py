@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import os
 from werkzeug.utils import secure_filename
+import base64
 
 app = Flask(__name__)
 

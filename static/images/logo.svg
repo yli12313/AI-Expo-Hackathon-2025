@@ -1,0 +1,17 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle ring -->
+  <circle 
+    cx="50" 
+    cy="50" 
+    r="45" 
+    fill="none" 
+    stroke="#1e3a8a" 
+    stroke-width="3"
+  />
+  <!-- Inner filled circle -->
+  <circle cx="50" cy="50" r="35" fill="#1e3a8a"/>
+  <!-- Eye symbol -->
+  <ellipse cx="50" cy="50" rx="18" ry="11" fill="#ffffff"/>
+  <circle cx="50" cy="50" r="8" fill="#1e3a8a"/>
+  <circle cx="52" cy="48" r="3" fill="#ffffff"/>
+</svg>
