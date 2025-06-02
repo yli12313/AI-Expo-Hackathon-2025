@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Emotion Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Live Emotion Detection</h1>
+        <video id="video" width="640" height="480" autoplay></video>
+        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+        <button id="toggle-btn" class="btn">Stop Analysis</button>
+        <p>Dominant Emotion: <span id="emotion">None</span></p>
+        <h3>All Emotions:</h3>
+        <ul id="emotions-list"></ul>
+        <script>
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const emotionSpan = document.getElementById('emotion');
+            const emotionsList = document.getElementById('emotions-list');
+            const toggleBtn = document.getElementById('toggle-btn');
+            let analysisActive = true;
+            let intervalId = null;
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => { video.srcObject = stream; });
+
+            function analyzeFrame() {
+                if (!analysisActive) return;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(blob => {
+                    const formData = new FormData();
+                    formData.append('frame', blob, 'frame.jpg');
+                    fetch('/detect_emotion', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        emotionSpan.textContent = data.emotion || 'None';
+                        emotionsList.innerHTML = '';
+                        if (data.emotions) {
+                            Object.entries(data.emotions).forEach(([emo, prob]) => {
+                                const li = document.createElement('li');
+                                li.textContent = `${emo}: ${prob.toFixed(2)}%`;
+                                if (emo === data.emotion) {
+                                    li.style.fontWeight = 'bold';
+                                    li.style.color = '#5aff5a';
+                                }
+                                emotionsList.appendChild(li);
+                            });
+                        }
+                    });
+                }, 'image/jpeg');
+            }
+
+            function startAnalysis() {
+                if (!intervalId) {
+                    intervalId = setInterval(analyzeFrame, 2000);
+                }
+            }
+
+            function stopAnalysis() {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                analysisActive = !analysisActive;
+                if (analysisActive) {
+                    toggleBtn.textContent = "Stop Analysis";
+                    startAnalysis();
+                } else {
+                    toggleBtn.textContent = "Start Analysis";
+                    stopAnalysis();
+                }
+            });
+            startAnalysis();
+        </script>
+    </div>
+</body>
+</html>
