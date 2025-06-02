@@ -17,7 +17,7 @@ def index():
 
 @app.route("/live")
 def live():
-    return render_template("home.html")
+    return render_template("live_result.html")
 
 @app.route("/detect_emotion", methods=["POST"])
 def detect_emotion():
@@ -44,7 +44,6 @@ def analyze_video():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
-        # Process video: extract frames every 2 seconds and analyze emotion
         cap = cv2.VideoCapture(filepath)
         fps = cap.get(cv2.CAP_PROP_FPS)
         interval = int(fps * 5)
