@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='videoresults.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0a0d0a;
+            color: #b6ffb6;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .results-flex {
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 48px 4vw 32px 4vw;
+        }
+        .video-container {
+            background: #181c1f;
+            border-radius: 16px;
+            box-shadow: 0 0 24px #000;
+            padding: 32px 32px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 480px;
+            max-width: 800px;
+            flex: 2 1 0;
+        }
+        .timeline-container {
+            background: #111912;
+            border-radius: 16px;
+            box-shadow: 0 0 16px #000;
+            padding: 28px 18px 18px 18px;
+            min-width: 180px;
+            max-width: 320px;
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .timeline-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 36px;
+            min-height: 480px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+        .timeline-marker {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #222;
+            border: 2px solid #5aff5a;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .timeline-marker:hover {
+            border-color: #b6ffb6;
+        }
+        .emotion-label {
+            position: absolute;
+            left: 42px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #111912;
+            color: #5aff5a;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            z-index: 2;
+        }
+        .timeline-marker:hover .emotion-label {
+            opacity: 1;
+        }
+        .timeline-time {
+            position: absolute;
+            left: 50%;
+            top: 36px;
+            transform: translateX(-50%);
+            color: #b6ffb6;
+            font-size: 0.9em;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            opacity: 0.7;
+        }
+        .btn {
+            background: #0a1f0a;
+            color: #5aff5a;
+            border: 2px solid #5aff5a;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 18px 18px 0 0;
+            transition: background 0.2s, color 0.2s;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            letter-spacing: 2px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #5aff5a;
+            color: #0a1f0a;
+        }
+        @media (max-width: 1100px) {
+            .results-flex {
+                flex-direction: column;
+                padding: 24px 2vw;
+            }
+            .video-container, .timeline-container {
+                min-width: unset;
+                max-width: unset;
+                width: 100%;
+            }
+            .timeline-container {
+                margin-top: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="results-flex">
+        <div class="video-container">
+            <h1>Video Analysis</h1>
+            <video width="640" controls>
+                <source src="{{ video_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <a href="{{ url_for('analyze_video') }}" class="btn">Analyze Another Video</a>
+            <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+        </div>
+        <div class="timeline-container">
+            <h3 style="margin-top:0;">Detected Emotions Timeline:</h3>
+            <div class="timeline-vertical">
+                {% for item in emotions %}
+                    <div class="timeline-marker">
+                        <span class="emotion-label">{{ item.emotion }}</span>
+                        <span class="timeline-time">{{ item.time }}s</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
