@@ -3,14 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Emotion Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div class="main-flex"
         style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
+    <nav class="app-nav">
+        <a href="/" class="nav-back">
+            <i class="fas fa-arrow-left"></i>
+            Back to Hub
+        </a>
+        <h2>Live Emotion Detection</h2>
+    </nav>
+    
+    <div class="main-flex" style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
         <div class="container video-container">
             <h1>Live Emotion Detection</h1>
             <div class="video-section">
@@ -18,7 +30,6 @@
                 <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
                 <div style="margin-top:18px;">
                     <button id="toggle-btn" class="btn">Stop Analysis</button>
-                    <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
                 </div>
                 <p style="margin-top:18px;"><span id="emotion">None</span></p>
             </div>
