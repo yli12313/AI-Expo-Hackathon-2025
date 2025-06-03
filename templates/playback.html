@@ -106,11 +106,13 @@
             
             card.addEventListener('mouseenter', () => {
                 if (yoloStream && videoFilename) {
-                    // Start YOLO stream
+                    // Start YOLO stream with object detection boxes
                     yoloStream.src = `/surveillance_yolo/${videoFilename}`;
                     yoloStream.style.opacity = '1';
+                    // Ensure the stream starts loading immediately
+                    yoloStream.style.display = 'block';
                 }
-                // Keep the video element as fallback but hide it
+                // Hide the regular video element
                 if (video) {
                     video.style.opacity = '0';
                 }
@@ -118,9 +120,10 @@
             
             card.addEventListener('mouseleave', () => {
                 if (yoloStream) {
-                    // Stop YOLO stream
+                    // Stop YOLO stream to save resources
                     yoloStream.src = '';
                     yoloStream.style.opacity = '0';
+                    yoloStream.style.display = 'none';
                 }
                 if (video) {
                     video.style.opacity = '0';
