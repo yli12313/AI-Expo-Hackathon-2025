@@ -48,6 +48,19 @@
             flex-direction: column;
             align-items: center;
         }
+        .video-player {
+            width: 100%;
+            max-width: 640px;
+            border-radius: 12px;
+            border: 2px solid #5aff5a;
+            background: #000;
+            margin-bottom: 24px;
+        }
+        .video-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #b6ffb6;
+        }
         .timeline-vertical {
             display: flex;
             flex-direction: column;
@@ -125,6 +138,14 @@
             background: #5aff5a;
             color: #0a1f0a;
         }
+        .error-message {
+            color: #ff5a5a;
+            background: #2a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+        }
         @media (max-width: 1100px) {
             .results-flex {
                 flex-direction: column;
@@ -144,37 +165,96 @@
 <body>
     <div class="results-flex">
         <div class="video-container">
-            <h1>Video Analysis</h1>
-            <video width="640" controls>
-            <source src="{{ url_for('uploaded_file', filename='processed_' + filename) }}" type="video/mp4">
-                Your browser does not support the video tag.
+            <h1>Emotion & Blink Detection Results</h1>
+            <div class="video-info">
+                <p>Processed video with eye tracking and blink detection</p>
+                <small>Video URL: {{ video_url }}</small>
+            </div>
+            
+            <video class="video-player" width="640" controls preload="metadata" onloadstart="console.log('Video loading started')" onloadeddata="console.log('Video data loaded')" onerror="console.error('Video error:', this.error)">
+                <source src="{{ video_url }}" type="video/mp4">
+                <source src="{{ video_url }}" type="video/webm">
+                <source src="{{ video_url }}">
+                <div class="error-message">
+                    Your browser does not support the video tag or the video format.
+                    <br><a href="{{ video_url }}" target="_blank" style="color: #5aff5a;">Download video directly</a>
+                </div>
             </video>
+            
+            <div class="video-debug" style="font-size: 0.8em; color: #888; margin-bottom: 20px;">
+                <p>Video file: {{ filename }}</p>
+                <p>If video doesn't play, try refreshing the page or check browser console for errors.</p>
+            </div>
+            
             <a href="{{ video_url }}" class="btn" download>Download Video</a>
             <a href="{{ url_for('analyze_video') }}" class="btn">Analyze Another Video</a>
             <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
         </div>
         <div class="timeline-container">
-            <h3 style="margin-top:0;">Detected Emotions Timeline:</h3>
+            <h3 style="margin-top:0;">Detected Events Timeline:</h3>
             <div class="timeline-vertical">
                 {% for item in emotions %}
                     <div class="timeline-marker">
-                        <span class="emotion-label"
-                              style="color: {% if item.emotion == 'Blink' %}#007bff{% else %}#28a745{% endif %}; font-weight: bold;">
+                        {% if item.emotion == 'Blink' %}
+                        <span class="emotion-label" style="color: #007bff; font-weight: bold;">
                             {{ item.emotion }}
                         </span>
+                        {% else %}
+                        <span class="emotion-label" style="color: #28a745; font-weight: bold;">
+                            {{ item.emotion }}
+                        </span>
+                        {% endif %}
                         {% if morse_sequence %}
-  <div>
-    <strong>Morse Code Sequence:</strong> {{ morse_sequence }}
-    {% if morse_decoded %}
-      <br><strong>Decoded Message:</strong> {{ morse_decoded }}
-    {% endif %}
-  </div>
-{% endif %}
+                        <div>
+                            <strong>Morse Code Sequence:</strong> {{ morse_sequence }}
+                            {% if morse_decoded %}
+                            <br><strong>Decoded Message:</strong> {{ morse_decoded }}
+                            {% endif %}
+                        </div>
+                        {% endif %}
                         <span class="timeline-time">{{ item.time }}s</span>
                     </div>
                 {% endfor %}
             </div>
         </div>
     </div>
+    
+    <script>
+        // Video debugging and error handling
+        const video = document.querySelector('video');
+        
+        video.addEventListener('loadstart', () => {
+            console.log('Video load started');
+        });
+        
+        video.addEventListener('loadedmetadata', () => {
+            console.log('Video metadata loaded', {
+                duration: video.duration,
+                videoWidth: video.videoWidth,
+                videoHeight: video.videoHeight
+            });
+        });
+        
+        video.addEventListener('loadeddata', () => {
+            console.log('Video data loaded');
+        });
+        
+        video.addEventListener('canplay', () => {
+            console.log('Video can start playing');
+        });
+        
+        video.addEventListener('error', (e) => {
+            console.error('Video error:', e, video.error);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `Video Error: ${video.error ? video.error.message || 'Unknown error' : 'Failed to load video'}`;
+            video.parentNode.insertBefore(errorDiv, video.nextSibling);
+        });
+        
+        // Try to load the video after page loads
+        window.addEventListener('load', () => {
+            video.load();
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Playback - AI+Expo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="app-nav">
+        <a href="/" class="nav-back">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
+        </a>
+        <h2>Video Playback System</h2>
+    </nav>
+
+    <div class="main-container">
+        <div class="video-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    History Videos Uploaded
+                </h2>
+                <div class="video-count">
+                    <span>{{ videos|length }} video{% if videos|length != 1 %}s{% endif %} found</span>
+                </div>
+            </div>
+
+            {% if videos %}
+                <div class="video-grid">
+                    {% for video in videos %}
+                        <div class="video-card" data-video-url="{{ url_for('video_analysis', filename=video.filename) }}">
+                            <div class="video-thumbnail">
+                                <div class="video-preview">
+                                    <i class="fas fa-play-circle"></i>
+                                    <img class="yolo-stream" src="" alt="YOLO Preview" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease;">
+                                    <video muted>
+                                        <source src="{{ url_for('serve_surveillance_video', filename=video.filename) }}" type="video/mp4">
+                                    </video>
+                                </div>
+                                <div class="video-duration">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="duration-text">Video</span>
+                                </div>
+                            </div>
+                            <div class="video-info">
+                                <h3 class="video-title">{{ video.name }}</h3>
+                                <div class="video-details">
+                                    <span class="video-size">
+                                        <i class="fas fa-file"></i>
+                                        {{ (video.size / 1024 / 1024)|round(1) }} MB
+                                    </span>
+                                    <span class="video-format">
+                                        <i class="fas fa-video"></i>
+                                        {{ video.filename.split('.')[-1].upper() }}
+                                    </span>
+                                </div>
+                                <div class="video-actions">
+                                    <button class="action-btn analyze-btn" data-video-url="{{ url_for('video_analysis', filename=video.filename) }}">
+                                        <i class="fas fa-chart-bar"></i>
+                                        Analyze
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-video-slash"></i>
+                    </div>
+                    <h3>No Videos Found</h3>
+                    <p>Upload videos to the surveillance folder to see them here.</p>
+                    <div class="upload-info">
+                        <p><strong>Supported formats:</strong> MP4, AVI, MOV, MKV, FLV, WMV, WEBM</p>
+                        <p><strong>Location:</strong> /surveillance/</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='modern.js') }}"></script>
+    <script>
+        // Video card hover effects
+        document.querySelectorAll('.video-card').forEach(card => {
+            const video = card.querySelector('video');
+            const yoloStream = card.querySelector('.yolo-stream');
+            // Extract filename from the video source
+            const videoSource = video.querySelector('source');
+            const videoSrc = videoSource ? videoSource.src : '';
+            const videoFilename = videoSrc.split('/').pop();
+            
+            // Handle video card click
+            card.addEventListener('click', () => {
+                const videoUrl = card.getAttribute('data-video-url');
+                if (videoUrl) {
+                    location.href = videoUrl;
+                }
+            });
+            
+            card.addEventListener('mouseenter', () => {
+                if (yoloStream && videoFilename) {
+                    // Start YOLO stream
+                    yoloStream.src = `/surveillance_yolo/${videoFilename}`;
+                    yoloStream.style.opacity = '1';
+                }
+                // Keep the video element as fallback but hide it
+                if (video) {
+                    video.style.opacity = '0';
+                }
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                if (yoloStream) {
+                    // Stop YOLO stream
+                    yoloStream.src = '';
+                    yoloStream.style.opacity = '0';
+                }
+                if (video) {
+                    video.style.opacity = '0';
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
+        });
+
+        // Prevent event bubbling for action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Handle analyze button click
+                if (btn.classList.contains('analyze-btn')) {
+                    const videoUrl = btn.getAttribute('data-video-url');
+                    if (videoUrl) {
+                        location.href = videoUrl;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
