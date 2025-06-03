@@ -104,8 +104,7 @@ def playback():
 
 @app.route("/video_analysis/<filename>")
 def video_analysis(filename):
-    """Route for individual video analysis page"""
-    # Verify the file exists in surveillance folder
+    """Serve video analysis page for individual videos from surveillance folder"""
     video_path = os.path.join(SURVEILLANCE_FOLDER, filename)
     if not os.path.exists(video_path) or not allowed_video_file(filename):
         return "Video not found", 404
@@ -116,7 +115,7 @@ def video_analysis(filename):
         'path': video_path,
         'size': os.path.getsize(video_path)
     }
-    return render_template("video_analysis.html", video=video_info)
+    return render_template("video_result.html", video=video_info)
 
 @app.route("/surveillance/<filename>")
 def serve_surveillance_video(filename):
