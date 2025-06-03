@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Live Emotion Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <div class="main-flex" style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
+    <div class="main-flex"
+        style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
         <div class="container video-container">
             <h1>Live Emotion Detection</h1>
             <div class="video-section">
@@ -28,42 +31,56 @@
         </div>
     </div>
 
-        <script>
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const emotionSpan = document.getElementById('emotion');
-            const emotionsList = document.getElementById('emotions-list');
-            const toggleBtn = document.getElementById('toggle-btn');
-            const ctx = canvas.getContext('2d');
-            let analysisActive = true;
-            let intervalId = null;
+    <div class="container" style="max-width: 800px; margin: 40px auto; color: black;">
+        <h2 style="color: white;">Chat Assistant</h2>
+        <div id="messages"
+            style="border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; margin-bottom: 10px; background: #f9f9f9; color: black;">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="user-input" placeholder="Type your message..."
+                style="flex: 1; padding: 8px; color: black;">
+            <button id="send-btn" class="btn">Send</button>
+        </div>
+    </div>
 
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => { video.srcObject = stream; });
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const emotionSpan = document.getElementById('emotion');
+        const emotionsList = document.getElementById('emotions-list');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const ctx = canvas.getContext('2d');
+        let analysisActive = true;
+        let intervalId = null;
 
-                function drawDetections(detections) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "#5aff5a";
-    ctx.lineWidth = 2;
-    ctx.font = "16px Bebas Neue, Arial";
-    detections.forEach(det => {
-        const [x1, y1, x2, y2] = det.box;
-        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
-        ctx.fillStyle = "#5aff5a";
-        ctx.fillText(`${det.label} (${(det.confidence*100).toFixed(1)}%)`, x1, y1 > 20 ? y1 - 5 : y1 + 15);
-    });
-}
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => { video.srcObject = stream; });
 
-            function analyzeFrame() {
-                if (!analysisActive) return;
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(blob => {
-                    const formData = new FormData();
-                    formData.append('frame', blob, 'frame.jpg');
-                    fetch('/detect_emotion', {
-                        method: 'POST',
-                        body: formData
-                    })
+        function drawDetections(detections) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#5aff5a";
+            ctx.lineWidth = 2;
+            ctx.font = "16px Bebas Neue, Arial";
+            detections.forEach(det => {
+                const [x1, y1, x2, y2] = det.box;
+                ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                ctx.fillStyle = "#5aff5a";
+                ctx.fillText(`${det.label} (${(det.confidence * 100).toFixed(1)}%)`, x1, y1 > 20 ? y1 - 5 : y1 + 15);
+            });
+        }
+
+        let lastEmotions = [];
+
+        function analyzeFrame() {
+            if (!analysisActive) return;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('frame', blob, 'frame.jpg');
+                fetch('/detect_emotion', {
+                    method: 'POST',
+                    body: formData
+                })
                     .then(res => res.json())
                     .then(data => {
                         emotionSpan.textContent = data.emotion || 'None';
@@ -78,71 +95,91 @@
                                 }
                                 emotionsList.appendChild(li);
                                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // redraw frame
-            
                             });
                         }
+
+                        // Track last three emotions
+                        lastEmotions.push(data.emotion);
+                        if (lastEmotions.length > 3) lastEmotions.shift();
+
+                        // Only display in chat if last three emotions are the same and not 'None'
+                        if (
+                            lastEmotions.length === 3 &&
+                            lastEmotions.every(e => e === lastEmotions[0]) &&
+                            lastEmotions[0] !== 'None'
+                        ) {
+                            appendMessage('assistant', data.explanation);
+                            lastEmotions = []; // reset so it doesn't spam
+                        }
                     });
-                }, 'image/jpeg');
+            }, 'image/jpeg');
+        }
+
+        function startAnalysis() {
+            if (!intervalId) {
+                intervalId = setInterval(analyzeFrame, 3000);
             }
+        }
 
-            function startAnalysis() {
-                if (!intervalId) {
-                    intervalId = setInterval(analyzeFrame, 2000);
-                }
+        function stopAnalysis() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
             }
+        }
 
-            function stopAnalysis() {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                    intervalId = null;
-                }
+        toggleBtn.addEventListener('click', () => {
+            analysisActive = !analysisActive;
+            if (analysisActive) {
+                toggleBtn.textContent = "Stop Analysis";
+                startAnalysis();
+            } else {
+                toggleBtn.textContent = "Start Analysis";
+                stopAnalysis();
             }
+        });
+        startAnalysis();
 
-            toggleBtn.addEventListener('click', () => {
-                analysisActive = !analysisActive;
-                if (analysisActive) {
-                    toggleBtn.textContent = "Stop Analysis";
-                    startAnalysis();
-                } else {
-                    toggleBtn.textContent = "Start Analysis";
-                    stopAnalysis();
-                }
-            });
-            startAnalysis();
-            
 
-            function appendMessage(cls, text) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'message ' + cls;
-                msgDiv.textContent = text;
+        function appendMessage(cls, text) {
+            // Remove previous assistant message if cls is 'assistant'
+            if (cls === 'assistant') {
                 const messages = document.getElementById('messages');
-                messages.appendChild(msgDiv);
-                messages.scrollTop = messages.scrollHeight;
+                const prev = messages.querySelector('.message.assistant');
+                if (prev) messages.removeChild(prev);
             }
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message ' + cls;
+            msgDiv.textContent = text;
+            const messages = document.getElementById('messages');
+            messages.appendChild(msgDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
 
-            function sendMessage() {
-                const input = document.getElementById('user-input');
-                const text = input.value.trim();
-                if (!text) return;
-                appendMessage('user', text);
-                input.value = '';
-                fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({message: text})
-                })
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+            if (!text) return;
+            appendMessage('user', text);
+            input.value = '';
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            })
                 .then(res => res.json())
                 .then(data => appendMessage('bot', data.response))
                 .catch(err => appendMessage('bot', 'Error: ' + err));
-            }
+        }
 
-            document.getElementById('send-btn').addEventListener('click', sendMessage);
-            document.getElementById('user-input').addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-        </script>
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+        document.getElementById('user-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
     </div>
 </body>
+
 </html>

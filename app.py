@@ -31,7 +31,6 @@ def live():
 
 @app.route("/detect_emotion", methods=["POST"])
 def detect_emotion():
-
     file = request.files['frame']
     img_bytes = np.frombuffer(file.read(), np.uint8)
     img = cv2.imdecode(img_bytes, cv2.IMREAD_COLOR)
@@ -44,12 +43,39 @@ def detect_emotion():
         if emotion in ["neutral", "disgust"]:
             emotion = "other"
         emotions = result['emotion']
-
     except Exception as e:
         emotion = None
         emotions = {}
+
     emotions = {k: float(v) for k, v in emotions.items()} if emotions else {}
-    return jsonify({"emotion": "Subject is feeling: " + emotion, "emotions": emotions})
+
+    # Compose the prompt for GPT
+    prompt = (
+        f"Subject is feeling {emotion}. "
+        f"Here are the emotion probabilities: {emotions}. "
+        "Explain in 2-3 sentences why the subject might be feeling this way."
+    )
+
+    # Call OpenAI API for explanation
+    try:
+        history = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=history,
+        )
+        explanation = completion.choices[0].message.content.strip()
+    except Exception as e:
+        explanation = f"Error: {e}"
+
+    return jsonify({
+        "emotion": emotion,
+        "emotions": emotions,
+        "prompt": prompt,
+        "explanation": explanation
+    })
 
 @app.route("/analyze_video", methods=["GET", "POST"])
 def analyze_video():
@@ -135,6 +161,11 @@ def api_chat():
 
     history.append({"role": "assistant", "content": response_text})
     session["chat_history"] = history[-6:]  # keep last few messages
+
+
+
+
+
     return jsonify({"response": response_text})
 
 if __name__ == "__main__":
