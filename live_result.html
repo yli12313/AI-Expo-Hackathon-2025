@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Emotion Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-flex" style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
+        <div class="container video-container">
+            <h1>Live Emotion Detection</h1>
+            <div class="video-section">
+                <video id="video" width="640" height="480" autoplay></video>
+                <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+                <div style="margin-top:18px;">
+                    <button id="toggle-btn" class="btn">Stop Analysis</button>
+                    <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+                </div>
+                <p style="margin-top:18px;"><span id="emotion">None</span></p>
+            </div>
+        </div>
+        <div class="container emotions-container">
+            <div class="emotions-section">
+                <h3 style="margin-top:0;">All Emotions:</h3>
+                <ul id="emotions-list"></ul>
+            </div>
+        </div>
+    </div>
+
+        <script>
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const emotionSpan = document.getElementById('emotion');
+            const emotionsList = document.getElementById('emotions-list');
+            const toggleBtn = document.getElementById('toggle-btn');
+            const ctx = canvas.getContext('2d');
+            let analysisActive = true;
+            let intervalId = null;
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => { video.srcObject = stream; });
+
+                function drawDetections(detections) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#5aff5a";
+    ctx.lineWidth = 2;
+    ctx.font = "16px Bebas Neue, Arial";
+    detections.forEach(det => {
+        const [x1, y1, x2, y2] = det.box;
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+        ctx.fillStyle = "#5aff5a";
+        ctx.fillText(`${det.label} (${(det.confidence*100).toFixed(1)}%)`, x1, y1 > 20 ? y1 - 5 : y1 + 15);
+    });
+}
+
+            function analyzeFrame() {
+                if (!analysisActive) return;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(blob => {
+                    const formData = new FormData();
+                    formData.append('frame', blob, 'frame.jpg');
+                    fetch('/detect_emotion', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        emotionSpan.textContent = data.emotion || 'None';
+                        emotionsList.innerHTML = '';
+                        if (data.emotions) {
+                            Object.entries(data.emotions).forEach(([emo, prob]) => {
+                                const li = document.createElement('li');
+                                li.textContent = `${emo}: ${prob.toFixed(2)}%`;
+                                if (emo === data.emotion) {
+                                    li.style.fontWeight = 'bold';
+                                    li.style.color = '#5aff5a';
+                                }
+                                emotionsList.appendChild(li);
+                                ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // redraw frame
+            
+                            });
+                        }
+                    });
+                }, 'image/jpeg');
+            }
+
+            function startAnalysis() {
+                if (!intervalId) {
+                    intervalId = setInterval(analyzeFrame, 2000);
+                }
+            }
+
+            function stopAnalysis() {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                analysisActive = !analysisActive;
+                if (analysisActive) {
+                    toggleBtn.textContent = "Stop Analysis";
+                    startAnalysis();
+                } else {
+                    toggleBtn.textContent = "Start Analysis";
+                    stopAnalysis();
+                }
+            });
+            startAnalysis();
+        </script>
+    </div>
+</body>
+</html>
