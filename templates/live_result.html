@@ -16,6 +16,16 @@
         <p>Dominant Emotion: <span id="emotion">None</span></p>
         <h3>All Emotions:</h3>
         <ul id="emotions-list"></ul>
+        
+        <h2 style="margin-top:40px">Chatbot</h2>
+        <div class="chat-container">
+            <div id="messages" class="chat-messages"></div>
+            <div>
+                <input type="text" id="user-input" placeholder="Type a message" />
+                <button class="btn" id="send-btn">Send</button>
+            </div>
+        </div>
+        
         <script>
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
@@ -82,6 +92,38 @@
                 }
             });
             startAnalysis();
+            
+            function appendMessage(cls, text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message ' + cls;
+                msgDiv.textContent = text;
+                const messages = document.getElementById('messages');
+                messages.appendChild(msgDiv);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function sendMessage() {
+                const input = document.getElementById('user-input');
+                const text = input.value.trim();
+                if (!text) return;
+                appendMessage('user', text);
+                input.value = '';
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: text})
+                })
+                .then(res => res.json())
+                .then(data => appendMessage('bot', data.response))
+                .catch(err => appendMessage('bot', 'Error: ' + err));
+            }
+
+            document.getElementById('send-btn').addEventListener('click', sendMessage);
+            document.getElementById('user-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
         </script>
     </div>
 </body>

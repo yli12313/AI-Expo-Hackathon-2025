@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Simple Chatbot</h1>
+    <div id="messages" class="chat-messages"></div>
+    <input type="text" id="user-input" placeholder="Type a message" />
+    <button class="btn" id="send-btn">Send</button>
+</div>
+<script>
+function appendMessage(cls, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = cls;
+    msgDiv.textContent = text;
+    document.getElementById('messages').appendChild(msgDiv);
+    document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+}
+
+document.getElementById('send-btn').addEventListener('click', () => {
+    const input = document.getElementById('user-input');
+    const text = input.value.trim();
+    if (!text) return;
+    appendMessage('user', text);
+    input.value = '';
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: text})
+    })
+    .then(res => res.json())
+    .then(data => appendMessage('bot', data.response))
+    .catch(err => appendMessage('bot', 'Error: ' + err));
+});
+</script>
+</body>
+</html>

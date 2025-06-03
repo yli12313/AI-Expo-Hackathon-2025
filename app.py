@@ -19,6 +19,7 @@ def index():
 
 @app.route("/live")
 def live():
+    """Display live emotion detection with embedded chatbot."""
     return render_template("live_result.html")
 
 @app.route("/detect_emotion", methods=["POST"])
@@ -93,9 +94,30 @@ def analyze_video():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route("/abuse_detect", methods=["GET"]) 
+@app.route("/abuse_detect", methods=["GET"])
 def abuse_detect():
     return render_template("abuse_detect.html")
+
+@app.route("/chatbot", methods=["GET"])
+def chatbot_page():
+    """Display a very small chatbot interface."""
+    return render_template("chatbot.html")
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    """Return a simple response for a given chat message."""
+    data = request.get_json()
+    message = data.get("message", "").strip().lower()
+
+    canned = {
+        "hi": "Hello! How can I assist you today?",
+        "hello": "Hi there! How can I help you?",
+        "bye": "Goodbye!"
+    }
+
+    response = canned.get(message, f"You said: {message}")
+    return jsonify({"response": response})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
