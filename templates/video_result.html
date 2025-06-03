@@ -75,6 +75,10 @@
             position: relative;
             width: 32px;
             height: 32px;
+            min-width: 32px;
+            min-height: 32px;
+            max-width: 32px;
+            max-height: 32px;
             border-radius: 50%;
             background: #222;
             border: 2px solid #5aff5a;
@@ -163,14 +167,16 @@
     </style>
 </head>
 <body>
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="AI+Expo Logo" class="main-logo">
+    </div>
+    
     <div class="results-flex">
         <div class="video-container">
             <h1>Emotion & Blink Detection Results</h1>
             <div class="video-info">
                 <p>Processed video with eye tracking and blink detection</p>
-                <small>Video URL: {{ video_url }}</small>
-            </div>
-            
+            </div>  
             <video class="video-player" width="640" controls preload="metadata" onloadstart="console.log('Video loading started')" onloadeddata="console.log('Video data loaded')" onerror="console.error('Video error:', this.error)">
                 <source src="{{ video_url }}" type="video/mp4">
                 <source src="{{ video_url }}" type="video/webm">
@@ -258,3 +264,4 @@
     </script>
 </body>
 </html>
+
