@@ -7,40 +7,55 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Live Emotion Detection</h1>
-        <video id="video" width="640" height="480" autoplay></video>
-        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-        <button id="toggle-btn" class="btn">Stop Analysis</button>
-        <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
-        <p>Dominant Emotion: <span id="emotion">None</span></p>
-        <h3>All Emotions:</h3>
-        <ul id="emotions-list"></ul>
-        
-        <h2 style="margin-top:40px">Chatbot</h2>
-        <div class="chat-container">
-            <div id="messages" class="chat-messages"></div>
-            <div>
-                <input type="text" id="user-input" placeholder="Type a message" />
-                <button class="btn" id="send-btn">Send</button>
+    <div class="main-flex" style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
+        <div class="container video-container">
+            <h1>Live Emotion Detection</h1>
+            <div class="video-section">
+                <video id="video" width="640" height="480" autoplay></video>
+                <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+                <div style="margin-top:18px;">
+                    <button id="toggle-btn" class="btn">Stop Analysis</button>
+                    <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+                </div>
+                <p style="margin-top:18px;"><span id="emotion">None</span></p>
             </div>
         </div>
-        
+        <div class="container emotions-container">
+            <div class="emotions-section">
+                <h3 style="margin-top:0;">All Emotions:</h3>
+                <ul id="emotions-list"></ul>
+            </div>
+        </div>
+    </div>
+
         <script>
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
             const emotionSpan = document.getElementById('emotion');
             const emotionsList = document.getElementById('emotions-list');
             const toggleBtn = document.getElementById('toggle-btn');
+            const ctx = canvas.getContext('2d');
             let analysisActive = true;
             let intervalId = null;
 
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(stream => { video.srcObject = stream; });
 
+                function drawDetections(detections) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#5aff5a";
+    ctx.lineWidth = 2;
+    ctx.font = "16px Bebas Neue, Arial";
+    detections.forEach(det => {
+        const [x1, y1, x2, y2] = det.box;
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+        ctx.fillStyle = "#5aff5a";
+        ctx.fillText(`${det.label} (${(det.confidence*100).toFixed(1)}%)`, x1, y1 > 20 ? y1 - 5 : y1 + 15);
+    });
+}
+
             function analyzeFrame() {
                 if (!analysisActive) return;
-                const ctx = canvas.getContext('2d');
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 canvas.toBlob(blob => {
                     const formData = new FormData();
@@ -62,6 +77,8 @@
                                     li.style.color = '#5aff5a';
                                 }
                                 emotionsList.appendChild(li);
+                                ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // redraw frame
+            
                             });
                         }
                     });
