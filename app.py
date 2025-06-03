@@ -171,7 +171,15 @@ def analyze_video():
         frame_idx = 0
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        
+        # Use H.264 codec for better browser compatibility
+        fourcc = cv2.VideoWriter_fourcc(*'H264')
+        # Fallback to other codecs if H264 is not available
+        if fourcc == 0:
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        if fourcc == 0:
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            
         processed_filename = "processed_" + filename
         processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
@@ -207,6 +215,12 @@ def analyze_video():
         with mp.solutions.face_mesh.FaceMesh(static_image_mode=False, max_num_faces=1, refine_landmarks=True) as face_mesh:
             cap = cv2.VideoCapture(filepath)
             out = cv2.VideoWriter(processed_filepath, fourcc, fps, (width, height))
+            
+            if not out.isOpened():
+                print(f"Error: Could not open video writer with codec {fourcc}")
+                # Try alternative approach - create video without codec specification
+                out = cv2.VideoWriter(processed_filepath, -1, fps, (width, height))
+                
             while True:
                 ret, frame = cap.read()
                 if not ret:
@@ -245,6 +259,12 @@ def analyze_video():
             cap.release()
             out.release()
 
+        # Check if the processed video was created successfully
+        if not os.path.exists(processed_filepath) or os.path.getsize(processed_filepath) == 0:
+            return f"<h1>Error: Failed to create processed video. File size: {os.path.getsize(processed_filepath) if os.path.exists(processed_filepath) else 'N/A'}</h1>"
+
+        print(f"Processed video created: {processed_filepath}, size: {os.path.getsize(processed_filepath)} bytes")
+
         return render_template(
             "video_result.html",
             video_url=url_for('uploaded_file', filename=processed_filename),
@@ -257,7 +277,33 @@ def analyze_video():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=False, mimetype='video/mp4')
+    """Serve video files from uploads folder with proper MIME type and range support"""
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+    if not os.path.exists(file_path):
+        return "File not found", 404
+    
+    # Determine MIME type based on file extension
+    file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    mime_types = {
+        'mp4': 'video/mp4',
+        'avi': 'video/x-msvideo',
+        'mov': 'video/quicktime',
+        'mkv': 'video/x-matroska',
+        'flv': 'video/x-flv',
+        'wmv': 'video/x-ms-wmv',
+        'webm': 'video/webm'
+    }
+    
+    mime_type = mime_types.get(file_ext, 'video/mp4')
+    
+    return send_from_directory(
+        app.config['UPLOAD_FOLDER'], 
+        filename, 
+        as_attachment=False, 
+        mimetype=mime_type,
+        conditional=True  # Enable range requests for video streaming
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
