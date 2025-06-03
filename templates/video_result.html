@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Video Analysis Results</title>
@@ -14,6 +15,7 @@
             margin: 0;
             padding: 0;
         }
+
         .results-flex {
             display: flex;
             flex-direction: row;
@@ -24,6 +26,7 @@
             box-sizing: border-box;
             padding: 48px 4vw 32px 4vw;
         }
+
         .video-container {
             background: #181c1f;
             border-radius: 16px;
@@ -36,6 +39,7 @@
             max-width: 800px;
             flex: 2 1 0;
         }
+
         .timeline-container {
             background: #111912;
             border-radius: 16px;
@@ -48,6 +52,7 @@
             flex-direction: column;
             align-items: center;
         }
+
         .video-player {
             width: 100%;
             max-width: 640px;
@@ -56,11 +61,13 @@
             background: #000;
             margin-bottom: 24px;
         }
+
         .video-info {
             text-align: center;
             margin-bottom: 20px;
             color: #b6ffb6;
         }
+
         .timeline-vertical {
             display: flex;
             flex-direction: column;
@@ -71,6 +78,7 @@
             overflow-y: auto;
             padding-right: 12px;
         }
+
         .timeline-marker {
             position: relative;
             width: 32px;
@@ -85,9 +93,11 @@
             justify-content: center;
             margin-bottom: 8px;
         }
+
         .timeline-marker:hover {
             border-color: #b6ffb6;
         }
+
         .emotion-label {
             position: absolute;
             left: 42px;
@@ -105,9 +115,11 @@
             white-space: nowrap;
             z-index: 2;
         }
+
         .timeline-marker:hover .emotion-label {
             opacity: 1;
         }
+
         .timeline-time {
             position: absolute;
             left: 50%;
@@ -118,6 +130,7 @@
             font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
             opacity: 0.7;
         }
+
         .btn {
             background: #0a1f0a;
             color: #5aff5a;
@@ -134,10 +147,12 @@
             text-decoration: none;
             display: inline-block;
         }
+
         .btn:hover {
             background: #5aff5a;
             color: #0a1f0a;
         }
+
         .error-message {
             color: #ff5a5a;
             background: #2a1a1a;
@@ -146,22 +161,27 @@
             margin: 10px 0;
             text-align: center;
         }
+
         @media (max-width: 1100px) {
             .results-flex {
                 flex-direction: column;
                 padding: 24px 2vw;
             }
-            .video-container, .timeline-container {
+
+            .video-container,
+            .timeline-container {
                 min-width: unset;
                 max-width: unset;
                 width: 100%;
             }
+
             .timeline-container {
                 margin-top: 32px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="results-flex">
         <div class="video-container">
@@ -170,8 +190,10 @@
                 <p>Processed video with eye tracking and blink detection</p>
                 <small>Video URL: {{ video_url }}</small>
             </div>
-            
-            <video class="video-player" width="640" controls preload="metadata" onloadstart="console.log('Video loading started')" onloadeddata="console.log('Video data loaded')" onerror="console.error('Video error:', this.error)">
+
+            <video class="video-player" width="640" controls preload="metadata"
+                onloadstart="console.log('Video loading started')" onloadeddata="console.log('Video data loaded')"
+                onerror="console.error('Video error:', this.error)">
                 <source src="{{ video_url }}" type="video/mp4">
                 <source src="{{ video_url }}" type="video/webm">
                 <source src="{{ video_url }}">
@@ -180,12 +202,12 @@
                     <br><a href="{{ video_url }}" target="_blank" style="color: #5aff5a;">Download video directly</a>
                 </div>
             </video>
-            
+
             <div class="video-debug" style="font-size: 0.8em; color: #888; margin-bottom: 20px;">
                 <p>Video file: {{ filename }}</p>
                 <p>If video doesn't play, try refreshing the page or check browser console for errors.</p>
             </div>
-            
+
             <a href="{{ video_url }}" class="btn" download>Download Video</a>
             <a href="{{ url_for('analyze_video') }}" class="btn">Analyze Another Video</a>
             <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
@@ -194,39 +216,45 @@
             <h3 style="margin-top:0;">Detected Events Timeline:</h3>
             <div class="timeline-vertical">
                 {% for item in emotions %}
-                    <div class="timeline-marker">
-                        {% if item.emotion == 'Blink' %}
-                        <span class="emotion-label" style="color: #007bff; font-weight: bold;">
-                            {{ item.emotion }}
-                        </span>
-                        {% else %}
-                        <span class="emotion-label" style="color: #28a745; font-weight: bold;">
-                            {{ item.emotion }}
-                        </span>
+                <div class="timeline-marker">
+                    {% if item.emotion == 'Blink' %}
+                    <span class="emotion-label" style="color: #007bff; font-weight: bold;">
+                        {{ item.emotion }}
+                    </span>
+                    {% else %}
+                    <span class="emotion-label" style="color: #28a745; font-weight: bold;">
+                        {{ item.emotion }}
+                    </span>
+                    {% endif %}
+                    {% if morse_sequence %}
+                    <div>
+                        <strong>Morse Code Sequence:</strong> {{ morse_sequence }}
+                        {% if morse_decoded %}
+                        <br><strong>Decoded Message:</strong> {{ morse_decoded }}
                         {% endif %}
-                        {% if morse_sequence %}
-                        <div>
-                            <strong>Morse Code Sequence:</strong> {{ morse_sequence }}
-                            {% if morse_decoded %}
-                            <br><strong>Decoded Message:</strong> {{ morse_decoded }}
-                            {% endif %}
-                        </div>
-                        {% endif %}
-                        <span class="timeline-time">{{ item.time }}s</span>
                     </div>
+                    {% endif %}
+                    <span class="timeline-time">{{ item.time }}s</span>
+                </div>
                 {% endfor %}
+            </div>
+            <div
+                style="background:#181c1f; border-radius:16px; box-shadow:0 0 24px #000; padding:24px; min-width:340px; max-width:400px; flex:1 1 0; display:flex; flex-direction:column; align-items:center;">
+                <h3 style="margin-top:0; color:#5aff5a;">Chatbot Assistant</h3>
+                <iframe src="{{ url_for('chatbot_page') }}" width="100%" height="500"
+                    style="border:none; border-radius:8px; background:#111;" title="Chatbot"></iframe>
             </div>
         </div>
     </div>
-    
+
     <script>
         // Video debugging and error handling
         const video = document.querySelector('video');
-        
+
         video.addEventListener('loadstart', () => {
             console.log('Video load started');
         });
-        
+
         video.addEventListener('loadedmetadata', () => {
             console.log('Video metadata loaded', {
                 duration: video.duration,
@@ -234,15 +262,15 @@
                 videoHeight: video.videoHeight
             });
         });
-        
+
         video.addEventListener('loadeddata', () => {
             console.log('Video data loaded');
         });
-        
+
         video.addEventListener('canplay', () => {
             console.log('Video can start playing');
         });
-        
+
         video.addEventListener('error', (e) => {
             console.error('Video error:', e, video.error);
             const errorDiv = document.createElement('div');
@@ -250,11 +278,12 @@
             errorDiv.innerHTML = `Video Error: ${video.error ? video.error.message || 'Unknown error' : 'Failed to load video'}`;
             video.parentNode.insertBefore(errorDiv, video.nextSibling);
         });
-        
+
         // Try to load the video after page loads
         window.addEventListener('load', () => {
             video.load();
         });
     </script>
 </body>
+
 </html>
