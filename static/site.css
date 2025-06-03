@@ -64,3 +64,26 @@ ul#emotions-list li[style*="bold"] {
     background: #5aff5a;
     color: #0a1f0a;
 }
+/* Chat styles */
+.chat-messages {
+    border: 1px solid #5aff5a;
+    padding: 10px;
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.chat-messages .user {
+    text-align: right;
+    color: #fff;
+}
+.chat-messages .bot {
+    text-align: left;
+    color: #5aff5a;
+}
+#user-input {
+    width: 70%;
+    padding: 6px;
+}
+#send-btn {
+    width: 25%;
+}
