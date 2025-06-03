@@ -20,6 +20,10 @@ def index():
 def live():
     return render_template("live_result.html")
 
+@app.route("/playback")
+def playback():
+    return render_template("playback.html")
+
 @app.route("/detect_emotion", methods=["POST"])
 def detect_emotion():
     file = request.files['frame']

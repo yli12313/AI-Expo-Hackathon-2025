@@ -432,4 +432,157 @@
     .main-logo {
         height: 45px;
     }
+}
+
+/* Playback Page Styles */
+.playback-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.feature-item {
+    background: rgba(17, 25, 18, 0.6);
+    border: 1px solid #2a4a2a;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    border-color: #5aff5a;
+    box-shadow: 0 10px 30px rgba(90, 255, 90, 0.2);
+}
+
+.feature-item i {
+    font-size: 2rem;
+    color: #5aff5a;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.feature-item h4 {
+    font-size: 1.3rem;
+    color: #5aff5a;
+    margin: 0 0 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+}
+
+.feature-item p {
+    font-size: 0.95rem;
+    color: #b6ffb6;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.coming-soon {
+    background: rgba(17, 25, 18, 0.8);
+    border: 2px dashed #5aff5a;
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.coming-soon i {
+    font-size: 3rem;
+    color: #5aff5a;
+    margin-bottom: 20px;
+    display: block;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.coming-soon h4 {
+    font-size: 1.8rem;
+    color: #5aff5a;
+    margin: 0 0 15px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+}
+
+.coming-soon ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.coming-soon li {
+    color: #b6ffb6;
+    margin: 10px 0;
+    padding-left: 25px;
+    position: relative;
+}
+
+.coming-soon li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #5aff5a;
+    font-weight: bold;
+}
+
+.feature-card.large {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* App Navigation */
+.app-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 13, 10, 0.95);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid #2a4a2a;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+.nav-back {
+    color: #5aff5a;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-back:hover {
+    color: #b6ffb6;
+    transform: translateX(-5px);
+}
+
+.app-nav h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #5aff5a;
+    font-size: 1.5rem;
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.main-content {
+    padding-top: 100px;
+    position: relative;
+    z-index: 10;
 } 

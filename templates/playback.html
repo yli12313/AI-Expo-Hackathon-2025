@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Playback - AI+Expo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="app-nav">
+        <a href="/" class="nav-back">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
+        </a>
+        <h2>Video Playback System</h2>
+    </nav>
+
+    <div class="hero-container">
+        <div class="hero-background">
+            <div class="grid-overlay"></div>
+            <div class="floating-particles"></div>
+        </div>
+        
+        <div class="main-content">
+            <div class="feature-card large">
+                <div class="feature-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <h3>Video Playback & Analysis Review</h3>
+                <p>Review previously analyzed videos with synchronized emotion detection results and detailed insights.</p>
+                
+                <div class="playback-features">
+                    <div class="feature-item">
+                        <i class="fas fa-video"></i>
+                        <h4>Video Library</h4>
+                        <p>Access all your previously analyzed videos</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Emotion Timeline</h4>
+                        <p>View emotion changes over time</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-download"></i>
+                        <h4>Export Results</h4>
+                        <p>Download analysis data and reports</p>
+                    </div>
+                </div>
+
+                <div class="coming-soon">
+                    <i class="fas fa-tools"></i>
+                    <h4>Coming Soon</h4>
+                    <p>This feature is currently under development. Soon you'll be able to:</p>
+                    <ul>
+                        <li>Playback analyzed videos with emotion overlays</li>
+                        <li>Navigate through video timeline with emotion markers</li>
+                        <li>Export emotion analysis reports</li>
+                        <li>Compare multiple video analyses</li>
+                        <li>Filter results by emotion types</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='modern.js') }}"></script>
+</body>
+</html> 

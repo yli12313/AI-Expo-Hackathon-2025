@@ -41,6 +41,11 @@
                     <span>Violation Detection</span>
                     <div class="tab-glow"></div>
                 </button>
+                <button class="tab-btn" data-tab="playback">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Playback</span>
+                    <div class="tab-glow"></div>
+                </button>
             </div>
 
             <div class="tab-content">
@@ -95,6 +100,34 @@
                         </div>
                         <button class="launch-btn" onclick="window.location.href='/analyze_video'">
                             <span>Launch Video Analysis</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="playback-panel">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>Video Playback System</h3>
+                        <p>Review and playback analyzed videos with synchronized emotion detection results. Navigate through analyzed footage with frame-by-frame precision and detailed emotion insights.</p>
+                        <div class="feature-stats">
+                            <div class="stat">
+                                <span class="stat-number">HD</span>
+                                <span class="stat-label">Quality</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">Timeline</span>
+                                <span class="stat-label">Navigation</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">Export</span>
+                                <span class="stat-label">Results</span>
+                            </div>
+                        </div>
+                        <button class="launch-btn" onclick="window.location.href='/playback'">
+                            <span>Launch Video Playback</span>
                             <i class="fas fa-rocket"></i>
                         </button>
                     </div>
