@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - AI+Expo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="AI+Expo Logo" class="main-logo">
+    </div>
+    
+    <div class="hero-container">
+        <div class="hero-background">
+            <div class="grid-overlay"></div>
+            <div class="floating-particles"></div>
+        </div>
+        
+        <header class="hero-header">
+            <h1 class="hero-title">
+                <span class="title-ai">WELCOME TO AI</span>
+                <span class="title-recognition">+</span>
+                <span class="title-hub">EXPO</span>
+            </h1>
+            <p class="hero-subtitle">Advanced Computer Vision Powered by Deep Learning</p>
+        </header>
+
+        <div class="tabs-container">
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="emotion">
+                    <i class="fas fa-smile"></i>
+                    <span>Emotion Recognition</span>
+                    <div class="tab-glow"></div>
+                </button>
+                <button class="tab-btn" data-tab="violation">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Violation Detection</span>
+                    <div class="tab-glow"></div>
+                </button>
+                <button class="tab-btn" data-tab="playback">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Playback</span>
+                    <div class="tab-glow"></div>
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-panel active" id="emotion-panel">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Live Emotion Analysis</h3>
+                        <p>Real-time facial emotion recognition using advanced deep learning models. Detect and analyze emotions from live video streams with high accuracy.</p>
+                        <div class="feature-stats">
+                            <div class="stat">
+                                <span class="stat-number">7</span>
+                                <span class="stat-label">Emotions</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">95%</span>
+                                <span class="stat-label">Accuracy</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">30</span>
+                                <span class="stat-label">FPS</span>
+                            </div>
+                        </div>
+                        <button class="launch-btn" onclick="window.location.href='/live'">
+                            <span>Launch Emotion Recognition</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="violation-panel">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>Video Analysis System</h3>
+                        <p>Intelligent video analysis system that processes uploaded videos to detect emotions and behavioral patterns over time with detailed timeline reports.</p>
+                        <div class="feature-stats">
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Processing</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">99%</span>
+                                <span class="stat-label">Accuracy</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">5s</span>
+                                <span class="stat-label">Per Video</span>
+                            </div>
+                        </div>
+                        <button class="launch-btn" onclick="window.location.href='/analyze_video'">
+                            <span>Launch Video Analysis</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="playback-panel">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>Video Playback System</h3>
+                        <p>Review and playback analyzed videos with synchronized emotion detection results. Navigate through analyzed footage with frame-by-frame precision and detailed emotion insights.</p>
+                        <div class="feature-stats">
+                            <div class="stat">
+                                <span class="stat-number">HD</span>
+                                <span class="stat-label">Quality</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">Timeline</span>
+                                <span class="stat-label">Navigation</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">Export</span>
+                                <span class="stat-label">Results</span>
+                            </div>
+                        </div>
+                        <button class="launch-btn" onclick="window.location.href='/playback'">
+                            <span>Launch Video Playback</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="hero-footer">
+            <p>Powered by DeepFace & Advanced Computer Vision</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='modern.js') }}"></script>
+</body>
+</html>
