@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Video Emotion Results</title>
+    <title>Video Analysis Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='videoresults.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         body {
@@ -87,7 +88,7 @@
         .timeline-marker:hover {
             border-color: #b6ffb6;
         }
-        .timeline-marker .emotion-label {
+        .emotion-label {
             position: absolute;
             left: 42px;
             top: 50%;
@@ -107,7 +108,7 @@
         .timeline-marker:hover .emotion-label {
             opacity: 1;
         }
-        .timeline-marker .timeline-time {
+        .timeline-time {
             position: absolute;
             left: 50%;
             top: 36px;
@@ -116,14 +117,6 @@
             font-size: 0.9em;
             font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
             opacity: 0.7;
-        }
-        .timeline-vertical::-webkit-scrollbar {
-            width: 8px;
-            background: #181c1f;
-        }
-        .timeline-vertical::-webkit-scrollbar-thumb {
-            background: #222;
-            border-radius: 4px;
         }
         .btn {
             background: #0a1f0a;
@@ -193,6 +186,7 @@
                 <p>If video doesn't play, try refreshing the page or check browser console for errors.</p>
             </div>
             
+            <a href="{{ video_url }}" class="btn" download>Download Video</a>
             <a href="{{ url_for('analyze_video') }}" class="btn">Analyze Another Video</a>
             <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
         </div>
@@ -201,7 +195,23 @@
             <div class="timeline-vertical">
                 {% for item in emotions %}
                     <div class="timeline-marker">
-                        <span class="emotion-label">{{ item.emotion }}</span>
+                        {% if item.emotion == 'Blink' %}
+                        <span class="emotion-label" style="color: #007bff; font-weight: bold;">
+                            {{ item.emotion }}
+                        </span>
+                        {% else %}
+                        <span class="emotion-label" style="color: #28a745; font-weight: bold;">
+                            {{ item.emotion }}
+                        </span>
+                        {% endif %}
+                        {% if morse_sequence %}
+                        <div>
+                            <strong>Morse Code Sequence:</strong> {{ morse_sequence }}
+                            {% if morse_decoded %}
+                            <br><strong>Decoded Message:</strong> {{ morse_decoded }}
+                            {% endif %}
+                        </div>
+                        {% endif %}
                         <span class="timeline-time">{{ item.time }}s</span>
                     </div>
                 {% endfor %}
