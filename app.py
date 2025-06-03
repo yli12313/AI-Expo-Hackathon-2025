@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
+from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, session
+from openai import OpenAI
 from deepface import DeepFace
 import cv2
 import numpy as np
@@ -6,8 +7,14 @@ import mediapipe as mp
 import os
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -105,19 +112,30 @@ def chatbot_page():
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
-    """Return a simple response for a given chat message."""
+    """Generate a dynamic response using the OpenAI API."""
     data = request.get_json()
-    message = data.get("message", "").strip().lower()
+    message = data.get("message", "").strip()
+    if not message:
+        return jsonify({"response": "Please say something."})
 
-    canned = {
-        "hi": "Hello! How can I assist you today?",
-        "hello": "Hi there! How can I help you?",
-        "bye": "Goodbye!"
-    }
+    # Maintain conversation history in the session
+    history = session.get("chat_history", [
+        {"role": "system", "content": "You are a helpful assistant."}
+    ])
+    history.append({"role": "user", "content": message})
 
-    response = canned.get(message, f"You said: {message}")
-    return jsonify({"response": response})
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=history,
+        )
+        response_text = completion.choices[0].message.content.strip()
+    except Exception as e:
+        response_text = f"Error: {e}"
 
+    history.append({"role": "assistant", "content": response_text})
+    session["chat_history"] = history[-6:]  # keep last few messages
+    return jsonify({"response": response_text})
 
 if __name__ == "__main__":
     app.run(debug=True)
