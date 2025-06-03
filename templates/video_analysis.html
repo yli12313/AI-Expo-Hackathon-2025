@@ -199,7 +199,7 @@
                     <i class="fas fa-eye"></i> LIVE DETECTION
                 </div>
                 <img class="yolo-video-stream" 
-                     src="{{ url_for('serve_yolo_video_stream', filename=video.filename) }}" 
+                     src="/surveillance_yolo/{{ video.filename }}" 
                      alt="YOLO Real-time Object Detection Stream"
                      style="width: 100%; height: auto; display: block; border-radius: 10px;">
             </div>
