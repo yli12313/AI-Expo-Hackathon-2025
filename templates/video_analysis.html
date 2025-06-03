@@ -17,41 +17,41 @@
             padding: 0;
         }
         
-        .analysis-header {
-            background: linear-gradient(135deg, #0a0d0a 0%, #1a2d1a 100%);
-            padding: 20px;
-            border-bottom: 2px solid #5aff5a;
-            margin-bottom: 30px;
-        }
-        
-        .analysis-title {
-            color: #5aff5a;
-            font-size: 2.5rem;
-            margin: 0;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(90, 255, 90, 0.3);
-        }
-        
-        .video-analysis-container {
-            max-width: 1200px;
+        .main-container {
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
         
-        .video-display-section {
+        .analysis-section {
             background: rgba(26, 45, 26, 0.8);
             border-radius: 15px;
             padding: 30px;
-            margin-bottom: 30px;
             border: 1px solid #5aff5a;
             box-shadow: 0 0 20px rgba(90, 255, 90, 0.1);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #5aff5a;
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(90, 255, 90, 0.3);
+        }
+        
+        .video-player-section {
+            text-align: center;
         }
         
         .video-container {
             position: relative;
             width: 100%;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 20px;
             border-radius: 10px;
             overflow: hidden;
             border: 2px solid #5aff5a;
@@ -65,12 +65,12 @@
             background: #000;
         }
         
-        .video-info {
+        .video-metadata {
             text-align: center;
             margin-top: 20px;
         }
         
-        .video-title {
+        .video-metadata h3 {
             color: #5aff5a;
             font-size: 1.8rem;
             margin-bottom: 15px;
@@ -82,7 +82,6 @@
             justify-content: center;
             gap: 30px;
             flex-wrap: wrap;
-            margin-top: 15px;
         }
         
         .metadata-item {
@@ -105,71 +104,12 @@
             font-weight: 500;
         }
         
-        .analysis-info {
-            background: rgba(26, 45, 26, 0.6);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid #5aff5a;
-            text-align: center;
-        }
-        
-        .analysis-info h3 {
-            color: #5aff5a;
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px rgba(90, 255, 90, 0.5);
-        }
-        
-        .analysis-info p {
-            color: #b6ffb6;
-            font-size: 1.1rem;
-            margin: 0;
-        }
-        
-        .nav-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(90, 255, 90, 0.1);
-            color: #5aff5a;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            border: 1px solid #5aff5a;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-        
-        .nav-back:hover {
-            background: rgba(90, 255, 90, 0.2);
-            box-shadow: 0 0 15px rgba(90, 255, 90, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .nav-back i {
-            font-size: 1.1rem;
-        }
-        
-        .status-indicator {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(90, 255, 90, 0.9);
-            color: #0a0d0a;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 0 10px rgba(90, 255, 90, 0.5);
-        }
-        
         @media (max-width: 768px) {
-            .analysis-title {
+            .section-title {
                 font-size: 2rem;
             }
             
-            .video-display-section {
+            .analysis-section {
                 padding: 20px;
             }
             
@@ -184,70 +124,48 @@
     </style>
 </head>
 <body>
-    <div class="analysis-header">
+    <nav class="app-nav">
         <a href="/playback" class="nav-back">
             <i class="fas fa-arrow-left"></i>
-            <span>Back to Video Library</span>
+            <span>Back to Videos</span>
         </a>
-        <h1 class="analysis-title">YOLO Object Detection Analysis</h1>
-    </div>
+        <h2>{{ video.name }}</h2>
+    </nav>
 
-    <div class="video-analysis-container">
-        <div class="video-display-section">
-            <div class="video-container">
-                <div class="status-indicator">
-                    <i class="fas fa-eye"></i> LIVE DETECTION
-                </div>
-                <img class="yolo-video-stream" 
-                     src="/surveillance_yolo/{{ video.filename }}" 
-                     alt="YOLO Real-time Object Detection Stream"
-                     style="width: 100%; height: auto; display: block; border-radius: 10px;">
+    <div class="main-container">
+        <div class="analysis-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Analysis Results
+                </h2>
             </div>
-            
-            <div class="video-info">
-                <h2 class="video-title">{{ video.name }}</h2>
-                <div class="metadata-grid">
-                    <div class="metadata-item">
-                        <i class="fas fa-file"></i>
-                        <span>Size: {{ (video.size / 1024 / 1024)|round(1) }} MB</span>
-                    </div>
-                    <div class="metadata-item">
-                        <i class="fas fa-video"></i>
-                        <span>Format: {{ video.filename.split('.')[-1].upper() }}</span>
-                    </div>
-                    <div class="metadata-item">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Model: YOLO v8</span>
+
+            <div class="video-player-section">
+                <div class="video-container">
+                    <img class="yolo-video-stream" src="/surveillance_yolo/{{ video.filename }}" alt="YOLO Analysis Stream">
+                </div>
+                <div class="video-metadata">
+                    <h3>{{ video.name }}</h3>
+                    <div class="metadata-grid">
+                        <div class="metadata-item">
+                            <i class="fas fa-file"></i>
+                            <span>File Size: {{ (video.size / 1024 / 1024)|round(1) }} MB</span>
+                        </div>
+                        <div class="metadata-item">
+                            <i class="fas fa-video"></i>
+                            <span>Format: {{ video.filename.split('.')[-1].upper() }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="analysis-info">
-            <h3><i class="fas fa-chart-bar"></i> Real-Time Object Detection</h3>
-            <p>This video stream shows live YOLO (You Only Look Once) object detection with bounding boxes, confidence scores, and object classifications in real-time.</p>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='modern.js') }}"></script>
     <script>
         // YOLO stream is now active - real-time object detection
-        console.log('YOLO object detection stream active for video:', '{{ video.filename }}');
-        
-        // Add some interactive feedback
-        const videoStream = document.querySelector('.yolo-video-stream');
-        const statusIndicator = document.querySelector('.status-indicator');
-        
-        videoStream.addEventListener('load', function() {
-            console.log('YOLO stream loaded successfully');
-            statusIndicator.innerHTML = '<i class="fas fa-check-circle"></i> ACTIVE';
-        });
-        
-        videoStream.addEventListener('error', function() {
-            console.log('YOLO stream error');
-            statusIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ERROR';
-            statusIndicator.style.background = 'rgba(255, 90, 90, 0.9)';
-        });
+        console.log('YOLO object detection stream active');
     </script>
 </body>
 </html> 
