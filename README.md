@@ -58,6 +58,13 @@ uploads/          # User uploads
 3. **Access the app:**  
    Open [http://localhost:5000](http://localhost:5000) in your browser.
 
+
+4. **Chatbot**
+   To get the chatbot working, put your OPEN AI API key in a `.env` file:
+   ```sh
+   OPENAI_API_KEY=<YOUR_SECRET_KEY>
+   ```
+
 ---
 
 ## Usage
