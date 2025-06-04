@@ -7,7 +7,6 @@ import mediapipe as mp
 import os
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
-from dotenv import load_dotenv
 import math
 
 def euclidean(p1, p2):
@@ -132,6 +131,13 @@ def serve_yolo_video_stream(filename):
     return Response(generate_yolo_frames(video_path),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route("/emergency_services", methods=["POST"])
+def emergency_services():
+    data = request.get_json()
+    location = data.get("location", "").lower()
+    services = "The emergency services have been notified for " + location.title() + ". Continue watching as necessary."
+    return jsonify({"services": services})
+
 @app.route("/detect_emotion", methods=["POST"])
 def detect_emotion():
     file = request.files['frame']
@@ -197,9 +203,7 @@ def analyze_video():
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         
-        # Use H.264 codec for better browser compatibility
         fourcc = cv2.VideoWriter_fourcc(*'H264')
-        # Fallback to other codecs if H264 is not available
         if fourcc == 0:
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         if fourcc == 0:
@@ -208,7 +212,6 @@ def analyze_video():
         processed_filename = "processed_" + filename
         processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-        # First pass: DeepFace emotion timeline
         while True:
             ret, frame = cap.read()
             if not ret:
@@ -358,11 +361,6 @@ def api_chat():
 
     history.append({"role": "assistant", "content": response_text})
     session["chat_history"] = history[-6:]  # keep last few messages
-
-
-
-
-
     return jsonify({"response": response_text})
 
 if __name__ == "__main__":
