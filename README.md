@@ -3,6 +3,8 @@
 
 # Project Perception
 
+![image](https://github.com/user-attachments/assets/5e96550c-5619-411d-a931-d93a1c48673a)
+
 Project Perception is a video analysis platform designed for interrogation and surveillance scenarios. It uses advanced computer vision and AI to detect emotions, blinks, and objects in both live and uploaded video footage. The platform also features a chatbot assistant for querying results and explanations.
 
 ---
