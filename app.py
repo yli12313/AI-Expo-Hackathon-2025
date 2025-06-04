@@ -12,21 +12,8 @@ import math
 def euclidean(p1, p2):
     return math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 
-app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
-client = OpenAI(api_key="OPENAI_API_KEY")
-
-UPLOAD_FOLDER = "uploads"
-SURVEILLANCE_FOLDER = "surveillance"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(SURVEILLANCE_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SURVEILLANCE_FOLDER'] = SURVEILLANCE_FOLDER
-
-# Initialize YOLO model
 yolo_model = YOLO("yolov8n.pt")
 
-# Allowed video extensions
 ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv', 'flv', 'wmv', 'webm'}
 
 def allowed_video_file(filename):
@@ -112,6 +99,17 @@ def detect_movement(video_path, threshold=10000000, min_events=7):
         prev_frame = gray
     cap.release()
     return False
+
+app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+client = OpenAI(api_key="OPENAI_API_KEY")
+
+UPLOAD_FOLDER = "uploads"
+SURVEILLANCE_FOLDER = "surveillance"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(SURVEILLANCE_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SURVEILLANCE_FOLDER'] = SURVEILLANCE_FOLDER
 
 @app.route("/")
 def index():
