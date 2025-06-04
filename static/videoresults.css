@@ -6,33 +6,42 @@ body {
     padding: 0;
 }
 
-.results-row {
+.results-flex {
     display: flex;
     flex-direction: row;
-    width: 100vw;
-    min-height: 100vh;
-    box-sizing: border-box;
-}
-
-.video-section {
-    flex: 2 1 0;
-    background: #181c1f;
-    padding: 48px 32px 32px 48px;
-    display: flex;
-    flex-direction: column;
+    gap: 40px;
     align-items: flex-start;
     justify-content: flex-start;
-    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 48px 4vw 32px 4vw;
+    min-height: 100vh;
 }
 
-.timeline-section {
-    flex: 1 1 0;
-    background: #111912;
-    padding: 48px 32px 32px 32px;
+.video-container {
+    background: #181c1f;
+    border-radius: 16px;
+    box-shadow: 0 0 24px #000;
+    padding: 32px 32px 24px 32px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    min-width: 0;
+    align-items: center;
+    min-width: 480px;
+    max-width: 800px;
+    flex: 2 1 0;
+}
+
+.timeline-container {
+    background: #111912;
+    border-radius: 16px;
+    box-shadow: 0 0 16px #000;
+    padding: 28px 18px 18px 18px;
+    min-width: 180px;
+    max-width: 320px;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     border-left: 2px solid #222;
 }
 
@@ -43,29 +52,41 @@ h1, h3 {
     font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
 }
 
-.video-section video {
+.video-player {
     width: 100%;
-    max-width: 900px;
+    max-width: 640px;
     border-radius: 12px;
     border: 2px solid #5aff5a;
     background: #000;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
+}
+
+.video-info {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #b6ffb6;
 }
 
 .timeline-vertical {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 36px;
-    width: 100%;
-    max-height: 80vh;
+    min-height: 180px;
+    max-height: 640px;
     overflow-y: auto;
-    margin-top: 24px;
+    padding-right: 12px;
+    width: 100%;
 }
 
 .timeline-marker {
     position: relative;
     width: 32px;
     height: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    min-height: 32px;
+    max-height: 32px;
     border-radius: 50%;
     background: #222;
     border: 2px solid #5aff5a;
@@ -81,7 +102,7 @@ h1, h3 {
     border-color: #b6ffb6;
 }
 
-.timeline-marker .emotion-label {
+.emotion-label {
     position: absolute;
     left: 42px;
     top: 50%;
@@ -103,7 +124,7 @@ h1, h3 {
     opacity: 1;
 }
 
-.timeline-marker .timeline-time {
+.timeline-time {
     position: absolute;
     left: 50%;
     top: 36px;
@@ -136,17 +157,28 @@ h1, h3 {
     color: #0a1f0a;
 }
 
+.error-message {
+    color: #ff5a5a;
+    background: #2a1a1a;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    text-align: center;
+}
+
 @media (max-width: 1100px) {
-    .results-row {
+    .results-flex {
         flex-direction: column;
+        padding: 24px 2vw;
     }
-    .video-section, .timeline-section {
-        width: 100vw;
+    .video-container,
+    .timeline-container {
         min-width: unset;
         max-width: unset;
-        padding: 32px 8vw 24px 8vw;
+        width: 100%;
     }
-    .timeline-section {
+    .timeline-container {
+        margin-top: 32px;
         border-left: none;
         border-top: 2px solid #222;
     }
