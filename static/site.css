@@ -64,3 +64,46 @@ ul#emotions-list li[style*="bold"] {
     background: #5aff5a;
     color: #0a1f0a;
 }
+/* Chat styles */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+}
+.chat-messages {
+    border: 1px solid #5aff5a;
+    padding: 10px;
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    background: #0f150f;
+}
+.chat-messages .message {
+    max-width: 80%;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+}
+.chat-messages .user {
+    align-self: flex-end;
+    background: #5aff5a;
+    color: #0a1f0a;
+    text-align: right;
+}
+.chat-messages .bot {
+    align-self: flex-start;
+    background: #1a2a1a;
+    color: #b6ffb6;
+    text-align: left;
+}
+#user-input {
+    width: 70%;
+    padding: 8px;
+    font-family: 'Inter', sans-serif;
+}
+#send-btn {
+    width: 25%;
+    margin-left: 5%;
+}

@@ -1,18 +1,24 @@
-from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, Response
+from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, session, Response
+from openai import OpenAI
 from deepface import DeepFace
 import cv2
 import numpy as np
 import mediapipe as mp
 import os
 from werkzeug.utils import secure_filename
-import base64
 from ultralytics import YOLO
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
 import math
 
 def euclidean(p1, p2):
     return math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 UPLOAD_FOLDER = "uploads"
 SURVEILLANCE_FOLDER = "surveillance"
@@ -95,6 +101,7 @@ def index():
 
 @app.route("/live")
 def live():
+    """Display live emotion detection with embedded chatbot."""
     return render_template("live_result.html")
 
 @app.route("/playback")
@@ -149,8 +156,36 @@ def detect_emotion():
     except Exception as e:
         emotion = None
         emotions = {}
+
     emotions = {k: float(v) for k, v in emotions.items()} if emotions else {}
-    return jsonify({"emotion": "Subject is feeling: " + str(emotion), "emotions": emotions})
+
+    # Compose the prompt for GPT
+    prompt = (
+        f"Subject is feeling {emotion}. "
+        f"Here are the emotion probabilities: {emotions}. "
+        "Explain in 2-3 sentences why the subject might be feeling this way."
+    )
+
+    # Call OpenAI API for explanation
+    try:
+        history = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=history,
+        )
+        explanation = completion.choices[0].message.content.strip()
+    except Exception as e:
+        explanation = f"Error: {e}"
+
+    return jsonify({
+        "emotion": emotion,
+        "emotions": emotions,
+        "prompt": prompt,
+        "explanation": explanation
+    })
 
 @app.route("/analyze_video", methods=["GET", "POST"])
 def analyze_video():
@@ -303,6 +338,43 @@ def uploaded_file(filename):
         mimetype=mime_type,
         conditional=True  # Enable range requests for video streaming
     )
+
+@app.route("/chatbot", methods=["GET"])
+def chatbot_page():
+    """Display a very small chatbot interface."""
+    return render_template("chatbot.html")
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    """Generate a dynamic response using the OpenAI API."""
+    data = request.get_json()
+    message = data.get("message", "").strip()
+    if not message:
+        return jsonify({"response": "Please say something."})
+
+    # Maintain conversation history in the session
+    history = session.get("chat_history", [
+        {"role": "system", "content": "You are a helpful assistant."}
+    ])
+    history.append({"role": "user", "content": message})
+
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=history,
+        )
+        response_text = completion.choices[0].message.content.strip()
+    except Exception as e:
+        response_text = f"Error: {e}"
+
+    history.append({"role": "assistant", "content": response_text})
+    session["chat_history"] = history[-6:]  # keep last few messages
+
+
+
+
+
+    return jsonify({"response": response_text})
 
 if __name__ == "__main__":
     app.run(debug=True)
