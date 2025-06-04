@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Analysis - {{ video.name }} - AI+Expo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #0a0d0a;
+            color: #b6ffb6;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .analysis-section {
+            background: rgba(26, 45, 26, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #5aff5a;
+            box-shadow: 0 0 20px rgba(90, 255, 90, 0.1);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #5aff5a;
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(90, 255, 90, 0.3);
+        }
+        
+        .video-player-section {
+            text-align: center;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #5aff5a;
+            box-shadow: 0 0 20px rgba(90, 255, 90, 0.3);
+        }
+        
+        .yolo-video-stream {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #000;
+        }
+        
+        .video-metadata {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .video-metadata h3 {
+            color: #5aff5a;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px rgba(90, 255, 90, 0.5);
+        }
+        
+        .metadata-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .metadata-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(90, 255, 90, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid #5aff5a;
+        }
+        
+        .metadata-item i {
+            color: #5aff5a;
+            font-size: 1.1rem;
+        }
+        
+        .metadata-item span {
+            color: #b6ffb6;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .analysis-section {
+                padding: 20px;
+            }
+            
+            .metadata-grid {
+                gap: 15px;
+            }
+            
+            .metadata-item {
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="app-nav">
+        <a href="/playback" class="nav-back">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Videos</span>
+        </a>
+        <h2>{{ video.name }}</h2>
+    </nav>
+
+    <div class="main-container">
+        <div class="analysis-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Analysis Results
+                </h2>
+            </div>
+
+            <div class="video-player-section">
+                <div class="video-container">
+                    <img class="yolo-video-stream" src="/surveillance_yolo/{{ video.filename }}" alt="YOLO Analysis Stream">
+                </div>
+                <div class="video-metadata">
+                    <h3>{{ video.name }}</h3>
+                    <div class="metadata-grid">
+                        <div class="metadata-item">
+                            <i class="fas fa-file"></i>
+                            <span>File Size: {{ (video.size / 1024 / 1024)|round(1) }} MB</span>
+                        </div>
+                        <div class="metadata-item">
+                            <i class="fas fa-video"></i>
+                            <span>Format: {{ video.filename.split('.')[-1].upper() }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='modern.js') }}"></script>
+    <script>
+        // YOLO stream is now active - real-time object detection
+        console.log('YOLO object detection stream active');
+    </script>
+</body>
+</html> 

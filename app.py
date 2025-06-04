@@ -122,7 +122,7 @@ def video_analysis(filename):
         'path': video_path,
         'size': os.path.getsize(video_path)
     }
-    return render_template("video_result.html", video=video_info)
+    return render_template("video_analysis.html", video=video_info)
 
 @app.route("/surveillance/<filename>")
 def serve_surveillance_video(filename):
