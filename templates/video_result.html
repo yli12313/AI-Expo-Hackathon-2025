@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -73,19 +73,17 @@
             flex-direction: column;
             align-items: center;
             gap: 36px;
-            min-height: 480px;
-            max-height: 600px;
+            min-height: 180px;
+            max-height: 340px;
             overflow-y: auto;
             padding-right: 12px;
         }
 
         .timeline-marker {
             position: relative;
-            width: 32px;
-            height: 32px;
             min-width: 32px;
-            min-height: 32px;
             max-width: 32px;
+            min-height: 32px;
             max-height: 32px;
             border-radius: 50%;
             background: #222;
@@ -187,15 +185,17 @@
 </head>
 
 <body>
-    <div class="logo-container">
-        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="AI+Expo Logo" class="main-logo">
-    </div>
-    
     <div class="results-flex">
         <div class="video-container">
             <h1>Emotion & Blink Detection Results</h1>
             <div class="video-info">
-                <p>Processed video with eye tracking and blink detection</p>             
+                <p>Processed video with eye tracking and blink detection</p>
+                <small>Video URL: {{ video_url }}</small>
+            </div>
+
+            <video class="video-player" width="640" controls preload="metadata"
+                onloadstart="console.log('Video loading started')" onloadeddata="console.log('Video data loaded')"
+                onerror="console.error('Video error:', this.error)">
                 <source src="{{ video_url }}" type="video/mp4">
                 <source src="{{ video_url }}" type="video/webm">
                 <source src="{{ video_url }}">
@@ -288,3 +288,290 @@
     </script>
 </body>
 
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Video Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='videoresults.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0a0d0a;
+            color: #b6ffb6;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .results-flex {
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 48px 4vw 32px 4vw;
+        }
+
+        .video-container {
+            background: #181c1f;
+            border-radius: 16px;
+            box-shadow: 0 0 24px #000;
+            padding: 32px 32px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 480px;
+            max-width: 800px;
+            flex: 2 1 0;
+        }
+
+        .timeline-container {
+            background: #111912;
+            border-radius: 16px;
+            box-shadow: 0 0 16px #000;
+            padding: 28px 18px 18px 18px;
+            min-width: 180px;
+            max-width: 320px;
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .video-player {
+            width: 100%;
+            max-width: 640px;
+            border-radius: 12px;
+            border: 2px solid #5aff5a;
+            background: #000;
+            margin-bottom: 24px;
+        }
+
+        .video-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #b6ffb6;
+        }
+
+        .timeline-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 36px;
+            min-height: 180px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+
+        .timeline-marker {
+            position: relative;
+            min-width: 32px;
+            max-width: 32px;
+            min-height: 32px;
+            max-height: 32px;
+            border-radius: 50%;
+            background: #222;
+            border: 2px solid #5aff5a;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .timeline-marker:hover {
+            border-color: #b6ffb6;
+        }
+
+        .emotion-label {
+            position: absolute;
+            left: 42px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #111912;
+            color: #5aff5a;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .timeline-marker:hover .emotion-label {
+            opacity: 1;
+        }
+
+        .timeline-time {
+            position: absolute;
+            left: 50%;
+            top: 36px;
+            transform: translateX(-50%);
+            color: #b6ffb6;
+            font-size: 0.9em;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            opacity: 0.7;
+        }
+
+        .btn {
+            background: #0a1f0a;
+            color: #5aff5a;
+            border: 2px solid #5aff5a;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 18px 18px 0 0;
+            transition: background 0.2s, color 0.2s;
+            font-family: 'Bebas Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            letter-spacing: 2px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #5aff5a;
+            color: #0a1f0a;
+        }
+
+        .error-message {
+            color: #ff5a5a;
+            background: #2a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 1100px) {
+            .results-flex {
+                flex-direction: column;
+                padding: 24px 2vw;
+            }
+
+            .video-container,
+            .timeline-container {
+                min-width: unset;
+                max-width: unset;
+                width: 100%;
+            }
+
+            .timeline-container {
+                margin-top: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="results-flex">
+        <div class="video-container">
+            <h1>Emotion & Blink Detection Results</h1>
+            <div class="video-info">
+                <p>Processed video with eye tracking and blink detection</p>
+                <small>Video URL: {{ video_url }}</small>
+            </div>
+
+            <video class="video-player" width="640" controls preload="metadata"
+                onloadstart="console.log('Video loading started')" onloadeddata="console.log('Video data loaded')"
+                onerror="console.error('Video error:', this.error)">
+                <source src="{{ video_url }}" type="video/mp4">
+                <source src="{{ video_url }}" type="video/webm">
+                <source src="{{ video_url }}">
+                <div class="error-message">
+                    Your browser does not support the video tag or the video format.
+                    <br><a href="{{ video_url }}" target="_blank" style="color: #5aff5a;">Download video directly</a>
+                </div>
+            </video>
+
+            <div class="video-debug" style="font-size: 0.8em; color: #888; margin-bottom: 20px;">
+                <p>Video file: {{ filename }}</p>
+                <p>If video doesn't play, try refreshing the page or check browser console for errors.</p>
+            </div>
+
+            <a href="{{ video_url }}" class="btn" download>Download Video</a>
+            <a href="{{ url_for('analyze_video') }}" class="btn">Analyze Another Video</a>
+            <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+        </div>
+        <div class="timeline-container">
+            <h3 style="margin-top:0;">Detected Events Timeline:</h3>
+            <div class="timeline-vertical">
+                {% for item in emotions %}
+                <div class="timeline-marker">
+                    {% if item.emotion == 'Blink' %}
+                    <span class="emotion-label" style="color: #007bff; font-weight: bold;">
+                        {{ item.emotion }}
+                    </span>
+                    {% else %}
+                    <span class="emotion-label" style="color: #28a745; font-weight: bold;">
+                        {{ item.emotion }}
+                    </span>
+                    {% endif %}
+                    {% if morse_sequence %}
+                    <div>
+                        <strong>Morse Code Sequence:</strong> {{ morse_sequence }}
+                        {% if morse_decoded %}
+                        <br><strong>Decoded Message:</strong> {{ morse_decoded }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <span class="timeline-time">{{ item.time }}s</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Video debugging and error handling
+        const video = document.querySelector('video');
+
+        video.addEventListener('loadstart', () => {
+            console.log('Video load started');
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            console.log('Video metadata loaded', {
+                duration: video.duration,
+                videoWidth: video.videoWidth,
+                videoHeight: video.videoHeight
+            });
+        });
+
+        video.addEventListener('loadeddata', () => {
+            console.log('Video data loaded');
+        });
+
+        video.addEventListener('canplay', () => {
+            console.log('Video can start playing');
+        });
+
+        video.addEventListener('error', (e) => {
+            console.error('Video error:', e, video.error);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `Video Error: ${video.error ? video.error.message || 'Unknown error' : 'Failed to load video'}`;
+            video.parentNode.insertBefore(errorDiv, video.nextSibling);
+        });
+
+        // Try to load the video after page loads
+        window.addEventListener('load', () => {
+            video.load();
+        });
+    </script>
+</body>
+
+</html>

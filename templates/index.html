@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - AI+Expo</title>
+    <title>Project - Perception</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,28 +22,28 @@
         
         <header class="hero-header">
             <h1 class="hero-title">
-                <span class="title-ai">WELCOME TO AI</span>
+                <span class="title-ai">Project</span>
                 <span class="title-recognition">+</span>
-                <span class="title-hub">EXPO</span>
+                <span class="title-hub">Perception</span>
             </h1>
-            <p class="hero-subtitle">Advanced Computer Vision Powered by Deep Learning</p>
+            <p class="hero-subtitle">Analyze Interrogation. Detect Deception. Locate Truth.</p>
         </header>
 
         <div class="tabs-container">
             <div class="tab-navigation">
                 <button class="tab-btn active" data-tab="emotion">
-                    <i class="fas fa-smile"></i>
-                    <span>Emotion Recognition</span>
+                    <i class="fas fa-question"></i>
+                    <span>Interrogation Analysis</span>
                     <div class="tab-glow"></div>
                 </button>
                 <button class="tab-btn" data-tab="violation">
                     <i class="fas fa-shield-alt"></i>
-                    <span>Violation Detection</span>
+                    <span>Optical Recognition</span>
                     <div class="tab-glow"></div>
                 </button>
                 <button class="tab-btn" data-tab="playback">
                     <i class="fas fa-play-circle"></i>
-                    <span>Playback</span>
+                    <span>Surveillance Playback</span>
                     <div class="tab-glow"></div>
                 </button>
             </div>
@@ -52,21 +52,17 @@
                 <div class="tab-panel active" id="emotion-panel">
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-video"></i>
+                            <i class="fas fa-question"></i>
                         </div>
-                        <h3>Live Emotion Analysis</h3>
-                        <p>Real-time facial emotion recognition using advanced deep learning models. Detect and analyze emotions from live video streams with high accuracy.</p>
+                        <h3>Live Interrogation Analysis</h3>
+                        <p>Real-time facial emotion recognition. Detect and analyze emotions from livestreams with high accuracy.</p>
                         <div class="feature-stats">
                             <div class="stat">
                                 <span class="stat-number">7</span>
                                 <span class="stat-label">Emotions</span>
                             </div>
                             <div class="stat">
-                                <span class="stat-number">95%</span>
-                                <span class="stat-label">Accuracy</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number">30</span>
+                                <span class="stat-number">30+</span>
                                 <span class="stat-label">FPS</span>
                             </div>
                         </div>
@@ -80,18 +76,14 @@
                 <div class="tab-panel" id="violation-panel">
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-shield-alt"></i>
                         </div>
                         <h3>Video Analysis System</h3>
-                        <p>Intelligent video analysis system that processes uploaded videos to detect emotions and behavioral patterns over time with detailed timeline reports.</p>
+                        <p>Intelligent video analysis system that processes uploaded videos to detect behavioral and optical patterns over time.</p>
                         <div class="feature-stats">
                             <div class="stat">
                                 <span class="stat-number">24/7</span>
                                 <span class="stat-label">Processing</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number">99%</span>
-                                <span class="stat-label">Accuracy</span>
                             </div>
                             <div class="stat">
                                 <span class="stat-number">5s</span>
@@ -108,22 +100,18 @@
                 <div class="tab-panel" id="playback-panel">
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-history"></i>
+                            <i class="fas fa-play-circle"></i>
                         </div>
                         <h3>Video Playback System</h3>
-                        <p>Review and playback analyzed videos with synchronized emotion detection results. Navigate through analyzed footage with frame-by-frame precision and detailed emotion insights.</p>
+                        <p>Review and playback analyzed videos with synchronized, fine-tuned models. Navigate through analyzed footage detailed insights.</p>
                         <div class="feature-stats">
                             <div class="stat">
-                                <span class="stat-number">HD</span>
-                                <span class="stat-label">Quality</span>
+                                <span class="stat-number">Image</span>
+                                <span class="stat-label">Recognition</span>
                             </div>
                             <div class="stat">
-                                <span class="stat-number">Timeline</span>
-                                <span class="stat-label">Navigation</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number">Export</span>
-                                <span class="stat-label">Results</span>
+                                <span class="stat-number">YOLOV8</span>
+                                <span class="stat-label">Fine-Tuned</span>
                             </div>
                         </div>
                         <button class="launch-btn" onclick="window.location.href='/playback'">

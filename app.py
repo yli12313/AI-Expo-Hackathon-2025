@@ -8,9 +8,6 @@ import os
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
 from dotenv import load_dotenv
-
-# Load the .env file
-load_dotenv()
 import math
 
 def euclidean(p1, p2):
@@ -18,7 +15,7 @@ def euclidean(p1, p2):
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(api_key="OPENAI_API_KEY")
 
 UPLOAD_FOLDER = "uploads"
 SURVEILLANCE_FOLDER = "surveillance"
@@ -54,7 +51,6 @@ def draw_yolo_boxes(frame, yolo_results, yolo_model):
     return frame
 
 def generate_yolo_frames(video_path):
-    """Generate video frames with YOLO detection"""
     cap = cv2.VideoCapture(video_path)
     
     if not cap.isOpened():
@@ -64,15 +60,12 @@ def generate_yolo_frames(video_path):
         while True:
             ret, frame = cap.read()
             if not ret:
-                # Loop the video for preview
                 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 continue
             
             # Apply YOLO detection
             yolo_results = yolo_model(frame)
             frame_with_boxes = draw_yolo_boxes(frame, yolo_results, yolo_model)
-            
-            # Encode frame to JPEG
             _, buffer = cv2.imencode('.jpg', frame_with_boxes)
             frame_bytes = buffer.tobytes()
             
@@ -159,14 +152,12 @@ def detect_emotion():
 
     emotions = {k: float(v) for k, v in emotions.items()} if emotions else {}
 
-    # Compose the prompt for GPT
     prompt = (
         f"Subject is feeling {emotion}. "
         f"Here are the emotion probabilities: {emotions}. "
-        "Explain in 2-3 sentences why the subject might be feeling this way."
+        "Explain in 2-3 sentences why the subject might be feeling this way, in context of an interrogation scene."
     )
 
-    # Call OpenAI API for explanation
     try:
         history = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -305,8 +296,6 @@ def analyze_video():
             emotions=emotions_timeline,
             filename=filename
         )
-
-    # GET request: show upload form
     return render_template("video_upload.html")
 
 @app.route('/uploads/<filename>')
@@ -377,4 +366,4 @@ def api_chat():
     return jsonify({"response": response_text})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=3000)
