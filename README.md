@@ -60,7 +60,7 @@ uploads/          # User uploads
 
 
 4. **Chatbot**
-   To get the chatbot working, put your OPEN AI API key in a `.env` file:
+   To get the chatbot working, put your OpenAI API key in a `.env` file:
    ```sh
    OPENAI_API_KEY=<YOUR_SECRET_KEY>
    ```
