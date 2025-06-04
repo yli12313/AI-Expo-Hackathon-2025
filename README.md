@@ -1,23 +1,72 @@
-# Flask Template
+### Presentation is [here](https://docs.google.com/presentation/d/1z-OlNjtZoe0iGm4j799QXGNu3lbD7xMHCoyMln45Xsg/edit). We tried really hard and built a cool project.
+* **Team**: Joshua John, Yue (Michelle) Lei, Yingquan Li
 
-This sample repo contains the recommended structure for a Python Flask project. In this sample, we use `flask` to build a web application and the `pytest` to run tests.
+# Project Perception
 
- For a more in-depth tutorial, see our [Flask tutorial](https://code.visualstudio.com/docs/python/tutorial-flask).
+Project Perception is a video analysis platform designed for interrogation and surveillance scenarios. It uses advanced computer vision and AI to detect emotions, blinks, and objects in both live and uploaded video footage. The platform also features a chatbot assistant for querying results and explanations.
 
- The code in this repo aims to follow Python style guidelines as outlined in [PEP 8](https://peps.python.org/pep-0008/).
+---
 
-## Running the Sample
+## Features
 
-To successfully run this example, we recommend the following VS Code extensions:
+- **Live Emotion Detection:** Analyze emotions in real-time using your webcam.
+- **Video Upload & Analysis:** Upload videos for automated emotion, blink, and object detection.
+- **YOLOv8 Object Recognition:** Detects and labels objects in video frames.
+- **Playback & History:** Review previously analyzed videos and their results.
+- **Chatbot Assistant:** Ask questions about analysis results or get explanations.
 
-- [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [Python Debugger](https://marketplace.visualstudio.com/items?itemName=ms-python.debugpy)
-- [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance) 
+---
 
-- Open the template folder in VS Code (**File** > **Open Folder...**)
-- Create a Python virtual environment using the **Python: Create Environment** command found in the Command Palette (**View > Command Palette**). Ensure you install dependencies found in the `pyproject.toml` file
-- Ensure your newly created environment is selected using the **Python: Select Interpreter** command found in the Command Palette
-- Run the app using the Run and Debug view or by pressing `F5`
-- To test your app, ensure you have the dependencies from `dev-requirements.txt` installed in your environment
-- Navigate to the Test Panel to configure your Python test or by triggering the **Python: Configure Tests** command from the Command Palette
-- Run tests in the Test Panel or by clicking the Play Button next to the individual tests in the `test_app.py` file
+## Tech Stack
+
+- **Backend:** Python 3.12, Flask, OpenCV, DeepFace, YOLOv8 (ultralytics), Torch, Pandas, NumPy, OpenAI API
+- **Frontend:** HTML5, CSS3 (Bebas Neue, Inter), Vanilla JavaScript, Font Awesome
+- **Storage:** Local file storage for uploads and processed results
+
+---
+
+## Project Structure
+
+```
+app.py
+requirements.txt
+dev-requirements.txt
+utils.py
+yolov8n.pt
+static/           # CSS, JS, images
+templates/        # HTML templates
+surveillance/     # Sample videos
+uploads/          # User uploads
+```
+
+---
+
+## Getting Started
+
+1. **Install dependencies:**
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+2. **Run the application:**
+    ```sh
+    python app.py
+    ```
+
+3. **Access the app:**  
+   Open [http://localhost:5000](http://localhost:5000) in your browser.
+
+---
+
+## Usage
+
+- Use the dashboard to start live analysis or upload a video.
+- View results with detected emotions, blinks, and objects.
+- Access playback/history to review past analyses.
+- Interact with the chatbot for insights or explanations.
+
+---
+
+## License
+
+For demonstration and educational purposes only.
