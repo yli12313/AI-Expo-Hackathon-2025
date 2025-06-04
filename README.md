@@ -1,7 +1,7 @@
+# Project Perception
+
 ### Presentation is [here](https://docs.google.com/presentation/d/1z-OlNjtZoe0iGm4j799QXGNu3lbD7xMHCoyMln45Xsg/edit). We tried really hard and built a cool project.
 * **Team**: Joshua John, Yue (Michelle) Lei, Yingquan Li
-
-# Project Perception
 
 ![image](https://github.com/user-attachments/assets/5e96550c-5619-411d-a931-d93a1c48673a)
 
