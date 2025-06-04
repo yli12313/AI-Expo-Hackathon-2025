@@ -191,6 +191,27 @@
             background: #fff;
             color: #ff4444;
         }
+        .chat-alert {
+    color: #fff;
+    background: #ff4444;
+    border: 2px solid #ff4444;
+    border-radius: 12px;
+    padding: 10px 18px;
+    margin: 8px 0;
+    font-weight: bold;
+    box-shadow: 0 0 16px 4px #ff4444, 0 0 4px #fff inset;
+    animation: glow-alert 1.2s infinite alternate;
+    display: inline-block;
+}
+
+@keyframes glow-alert {
+    from {
+        box-shadow: 0 0 16px 4px #ff4444, 0 0 4px #fff inset;
+    }
+    to {
+        box-shadow: 0 0 32px 8px #ff4444, 0 0 8px #fff inset;
+    }
+}
         @media (max-width: 1100px) {
             .flex-row {
                 flex-direction: column;
@@ -259,7 +280,7 @@
             </div>
             <!-- RIGHT: Chatbot -->
             <div class="chatbot-container">
-                <h2>Chat Assistant</h2>
+                <h2>Alert System</h2>
                 <div id="chat-messages" class="chat-messages"></div>
                 <div class="chatbot-input-row">
                     <input id="user-input" type="text" placeholder="Type your message..." autocomplete="off"/>
@@ -270,7 +291,26 @@
         </div>
     </div>
     <script>
-        const videoLocation = "{{ video.name }}"; // Jinja2: the video title/location
+        // --- Movement detection and chatbot alert ---
+        function checkMovement(filename) {
+            fetch(`/api/check_movement/${filename}`, {method: "POST"})
+                .then(res => res.json())
+                .then(data => {
+                    if (data.alert) {
+                        // Only append to chat window, no popup
+                        const chat = document.getElementById("chat-messages");
+                        if (chat) {
+                            chat.innerHTML += `<div class="chat-alert">${data.alert}</div>`;
+                            chat.scrollTop = chat.scrollHeight;
+                        }
+                    }
+                });
+        }
+
+        // Call checkMovement when the page loads for this video
+        document.addEventListener('DOMContentLoaded', function() {
+            checkMovement("{{ video.filename }}");
+        });
 
         // Chatbot send
         document.getElementById('send-btn').onclick = function() {
@@ -297,7 +337,7 @@
             fetch('/emergency_services', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ location: videoLocation })
+                body: JSON.stringify({ location: "{{ video.name }}" })
             })
             .then(res => res.json())
             .then(data => {

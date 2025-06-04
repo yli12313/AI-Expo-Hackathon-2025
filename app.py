@@ -87,6 +87,32 @@ def get_surveillance_videos():
                 })
     return sorted(videos, key=lambda x: x['name'])
 
+def detect_movement(video_path, threshold=10000000, min_events=7):
+    """Detects significant movement in a video file.
+    Returns True if movement events exceed min_events."""
+    cap = cv2.VideoCapture(video_path)
+    prev_frame = None
+    movement_events = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (21, 21), 0)
+        if prev_frame is not None:
+            frame_delta = cv2.absdiff(prev_frame, gray)
+            thresh = cv2.threshold(frame_delta, 25, 255, cv2.THRESH_BINARY)[1]
+            movement_score = np.sum(thresh)
+            if movement_score > threshold:
+                movement_events += 1
+                if movement_events >= min_events:
+                    cap.release()
+                    return True
+        prev_frame = gray
+    cap.release()
+    return False
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -183,6 +209,26 @@ def detect_emotion():
         "prompt": prompt,
         "explanation": explanation
     })
+
+@app.route("/api/check_movement/<filename>", methods=["POST"])
+def check_movement(filename):
+    video_path = os.path.join(SURVEILLANCE_FOLDER, filename)
+    if not os.path.exists(video_path):
+        return jsonify({"error": "Video not found"}), 404
+
+    movement_detected = detect_movement(video_path)
+    if movement_detected:
+        # Send alert to chatbot (simulate by storing in session or DB)
+        alert_message = "Alert: Significant movement detected in the video!"
+        # Optionally, append to chat history
+        history = session.get("chat_history", [
+            {"role": "system", "content": "You are a helpful assistant."}
+        ])
+        history.append({"role": "assistant", "content": alert_message})
+        session["chat_history"] = history[-6:]
+        return jsonify({"alert": alert_message, "movement": True})
+    else:
+        return jsonify({"movement": False})
 
 @app.route("/analyze_video", methods=["GET", "POST"])
 def analyze_video():

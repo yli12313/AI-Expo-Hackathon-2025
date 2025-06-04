@@ -10,7 +10,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
+<style>
+    .emotion-alert {
+        color: #fff;
+        background: #1ed760;
+        border: 2px solid #1ed760;
+        border-radius: 12px;
+        padding: 10px 18px;
+        margin: 8px 0;
+        font-weight: bold;
+        box-shadow: 0 0 16px 4px #1ed760, 0 0 4px #fff inset;
+        animation: glow-emotion 1.2s infinite alternate;
+        display: inline-block;
+    }
+    @keyframes glow-emotion {
+        from {
+            box-shadow: 0 0 16px 4px #1ed760, 0 0 4px #fff inset;
+        }
+        to {
+            box-shadow: 0 0 32px 8px #1ed760, 0 0 8px #fff inset;
+        }
+    }
+</style>
 <body>
     <div class="main-flex"
         style="display: flex; gap: 48px; justify-content: center; align-items: flex-start; margin-top: 32px;">
@@ -31,7 +52,8 @@
                 <div style="margin-top:18px;">
                     <button id="toggle-btn" class="btn">Stop Analysis</button>
                 </div>
-                <p style="margin-top:18px;"><span id="emotion">None</span></p>
+                    <p style="margin-top:18px;">
+                    <span id="emotion"></span>
             </div>
         </div>
         <div class="container emotions-container">
@@ -119,7 +141,7 @@
                             lastEmotions.every(e => e === lastEmotions[0]) &&
                             lastEmotions[0] !== 'None'
                         ) {
-                            appendMessage('assistant', data.explanation);
+                            appendMessage('assistant', data.explanation, true); // true = isEmotion
                             lastEmotions = []; // reset so it doesn't spam
                         }
                     });
@@ -152,7 +174,7 @@
         startAnalysis();
 
 
-        function appendMessage(cls, text) {
+        function appendMessage(cls, text, isEmotion=false) {
             // Remove previous assistant message if cls is 'assistant'
             if (cls === 'assistant') {
                 const messages = document.getElementById('messages');
@@ -161,6 +183,9 @@
             }
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message ' + cls;
+            if (isEmotion) {
+                msgDiv.classList.add('emotion-alert');
+            }
             msgDiv.textContent = text;
             const messages = document.getElementById('messages');
             messages.appendChild(msgDiv);
