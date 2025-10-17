@@ -1,6 +1,6 @@
 # Project Perception
 
-### Pitch deck is [here](https://github.com/yli12313/Presentations-Given/blob/main/20250604_AI_Expo_Hackathon/20250603_Project_Perception.pdf)! We tried really hard and built a cool project; we will try hard again next time!
+### Out pitch deck is [here](https://github.com/yli12313/Presentations-Given/blob/main/20250604_AI_Expo_Hackathon/20250603_Project_Perception.pdf)! We tried really hard and built a cool project; we will try hard again next time!
 * **Team**: Joshua John, Yue (Michelle) Lei, Yingquan Li
 
 ![image](https://github.com/user-attachments/assets/5e96550c-5619-411d-a931-d93a1c48673a)
